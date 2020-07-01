@@ -10,11 +10,11 @@ NAME := Lib_tle5012_angle
 #GLOBAL_DEFINES   := HALL_SWITCH_FRAMEWORK=HALL_SWITCH_FRMWK_WICED
 
 GLOBAL_INCLUDES  := src/		\
-					src/util 				  		
+					#src/util	
 
-$(NAME)_SOURCES  := src/Tle5012b.cpp			\
-					src/Tle5012b_4wire.cpp		\
-					src/Tle5012b_reg.cpp		\	
-					src/util/Tle5012b_SPI.cpp	
-
+$(NAME)_SOURCES  := src/Tle5012b.cpp		\
+					#src/Tle5012b_4wire.cpp	\
+					#src/Tle5012b_reg.cpp	\
+					#src/util/Tle5012b_SPI.cpp 
+					
 VALID_PLATFORMS	 := CYW943907AEVAL1F

@@ -44,7 +44,8 @@
 #ifndef TLE5012B_4WIRE_H_
 #define TLE5012B_4WIRE_H_
 
-#include "SPI.h"
+//#include "SPI.h"
+
 
 //Error masks for safety words
 #define SYSTEM_ERROR_MASK 			0x4000

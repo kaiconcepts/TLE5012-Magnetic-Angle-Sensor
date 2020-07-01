@@ -42,8 +42,9 @@
  *
  */
 
-#include "Arduino.h"
-#include "util/Tle5012b_SPI.h"
+//#include "Arduino.h"
+#include <stdint.h>
+//#include "util/Tle5012b_SPI.h"
 
 #ifndef TLE5012B_H
 #define TLE5012B_H
@@ -141,7 +142,9 @@ class Tle5012b
 {
 	public:
 
-	Tle5012b_SPI* _spiConnection;        //!< SPI library for 3/4wire setup
+    class SPI;
+	//Tle5012b_SPI* _spiConnection;        //!< SPI library for 3/4wire setup
+    SPI * _spiConnection;        //!< SPI library for 3/4wire setup
 
 	/*!
 	 * Offset for the slave number register to identify the
@@ -165,10 +168,10 @@ class Tle5012b
 	slaveNum mSlave;           //!< actual set slave number
 
 	typedef struct safetyWord {  //!< Safety word bit setting
-		boolean STAT_RES;        //!< bits 15:15 Indication of chip reset or watchdog overflow
-		boolean STAT_ERR;        //!< bits 14:14 System error
-		boolean STAT_ACC;        //!< bits 13:13 Interface access error
-		boolean STAT_ANG;        //!< bits 12:12 Invalid angle value
+		bool    STAT_RES;        //!< bits 15:15 Indication of chip reset or watchdog overflow
+		bool    STAT_ERR;        //!< bits 14:14 System error
+		bool    STAT_ACC;        //!< bits 13:13 Interface access error
+		bool    STAT_ANG;        //!< bits 12:12 Invalid angle value
 		uint8_t RESP;            //!< bits 11:8 Sensor number response indicator
 		uint8_t CRC;             //!< bits 7:0 Status ADC Test
 
@@ -222,8 +225,8 @@ class Tle5012b
 	 */
 	errorTypes begin();
 	errorTypes begin(uint8_t cs, slaveNum slave=TLE5012B_S0 );
-	errorTypes begin(Tle5012b_SPI &bus, uint8_t cs, slaveNum slave=TLE5012B_S0 );
-	errorTypes begin(Tle5012b_SPI &bus, uint8_t miso, uint8_t mosi, uint8_t sck, uint8_t cs,slaveNum slave=TLE5012B_S0);
+	errorTypes begin(Tle5012b::SPI &bus, uint8_t cs, slaveNum slave=TLE5012B_S0 );
+	errorTypes begin(Tle5012b::SPI &bus, uint8_t miso, uint8_t mosi, uint8_t sck, uint8_t cs,slaveNum slave=TLE5012B_S0);
 
 	void end();			//!< Switches the sensor off and ends the comunication
 

@@ -32,8 +32,8 @@
  *
  */
 
-#include "Arduino.h"
-#include "SPI.h"
+//#include "Arduino.h"
+//#include "SPI.h"
 
 #ifndef TLE5012B_SPI_H
 #define TLE5012B_SPI_H

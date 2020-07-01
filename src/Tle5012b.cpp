@@ -167,11 +167,11 @@ errorTypes Tle5012b::begin(uint8_t cs, slaveNum slave)
 {
 	return (begin(*_spiConnection, mMISO, mMOSI, mSCK, cs, slave ));
 }
-errorTypes Tle5012b::begin(Tle5012b_SPI &bus, uint8_t cs, slaveNum slave)
+errorTypes Tle5012b::begin(SPI &bus, uint8_t cs, slaveNum slave)
 {
 	return (begin(bus, mMISO, mMOSI, mSCK, cs, slave ));
 }
-errorTypes Tle5012b::begin(Tle5012b_SPI &bus, uint8_t miso, uint8_t mosi, uint8_t sck, uint8_t cs, slaveNum slave)
+errorTypes Tle5012b::begin(SPI &bus, uint8_t miso, uint8_t mosi, uint8_t sck, uint8_t cs, slaveNum slave)
 {
 	mCS = cs;
 	mMISO = miso;
