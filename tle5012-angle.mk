@@ -7,14 +7,23 @@
 
 NAME := Lib_tle5012_angle
 
-#GLOBAL_DEFINES   := HALL_SWITCH_FRAMEWORK=HALL_SWITCH_FRMWK_WICED
+GLOBAL_DEFINES   := TLE5012B_FRAMEWORK=TLE5012B_FRMWK_WICED
 
-GLOBAL_INCLUDES  := src/		\
+GLOBAL_INCLUDES  := src/								\
+					src/config							\
+					src/pal								\
+					src/framework/wiced-43xxx/pal		\
+					src/framework/wiced-43xxx/wrapper
 					#src/util	
 
-$(NAME)_SOURCES  := src/Tle5012b.cpp		\
+$(NAME)_SOURCES  := src/Tle5012b.cpp											\
+					src/Tle5012b_reg.cpp										\
+					src/framework/wiced-43xxx/pal/tle5012b-pal-gpio-wiced.cpp	\
+					src/framework/wiced-43xxx/pal/tle5012b-pal-timer-wiced.cpp	\
+					src/framework/wiced-43xxx/pal/tle5012b-pal-spi-wiced.cpp	\
+					src/framework/wiced-43xxx/wrapper/tle5012b-wiced.cpp		\
+					src/framework/wiced-43xxx/wrapper/tle5012b-platf-wiced.cpp	
 					#src/Tle5012b_4wire.cpp	\
-					#src/Tle5012b_reg.cpp	\
 					#src/util/Tle5012b_SPI.cpp 
 					
 VALID_PLATFORMS	 := CYW943907AEVAL1F

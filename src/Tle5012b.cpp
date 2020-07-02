@@ -159,19 +159,19 @@ Tle5012b::~Tle5012b()
 	end();
 }
 
-errorTypes Tle5012b::begin()
+Tle5012b::Error_t Tle5012b::begin()
 {
 	return (begin(*_spiConnection, mMISO, mMOSI, mSCK, mCS, mSlave));
 }
-errorTypes Tle5012b::begin(uint8_t cs, slaveNum slave)
+Tle5012b::Error_t Tle5012b::begin(uint8_t cs, slaveNum slave)
 {
 	return (begin(*_spiConnection, mMISO, mMOSI, mSCK, cs, slave ));
 }
-errorTypes Tle5012b::begin(SPI &bus, uint8_t cs, slaveNum slave)
+Tle5012b::Error_t Tle5012b::begin(SPI &bus, uint8_t cs, slaveNum slave)
 {
 	return (begin(bus, mMISO, mMOSI, mSCK, cs, slave ));
 }
-errorTypes Tle5012b::begin(SPI &bus, uint8_t miso, uint8_t mosi, uint8_t sck, uint8_t cs, slaveNum slave)
+Tle5012b::Error_t Tle5012b::begin(SPI &bus, uint8_t miso, uint8_t mosi, uint8_t sck, uint8_t cs, slaveNum slave)
 {
 	mCS = cs;
 	mMISO = miso;
@@ -216,9 +216,9 @@ void Tle5012b::disableSensor()
 
 //-----------------------------------------------------------------------------
 // begin generic data transfer functions
-errorTypes Tle5012b::readFromSensor(uint16_t command, uint16_t &data, updTypes upd, safetyTypes safe)
+Tle5012b::Error_t Tle5012b::readFromSensor(uint16_t command, uint16_t &data, updTypes upd, safetyTypes safe)
 {
-	errorTypes checkError = NO_ERROR;
+	Error_t checkError = NO_ERROR;
 
 	_command[0] = READ_SENSOR | command | upd | safe;
 	uint16_t _received[MAX_REGISTER_MEM] = {0};
@@ -237,9 +237,9 @@ errorTypes Tle5012b::readFromSensor(uint16_t command, uint16_t &data, updTypes u
 	return (checkError);
 }
 
-errorTypes Tle5012b::readMoreRegisters(uint16_t command, uint16_t data[], updTypes upd, safetyTypes safe)
+Tle5012b::Error_t Tle5012b::readMoreRegisters(uint16_t command, uint16_t data[], updTypes upd, safetyTypes safe)
 {
-	errorTypes checkError = NO_ERROR;
+	Error_t checkError = NO_ERROR;
 
 	_command[0] = READ_SENSOR | command | upd | safe;
 	uint16_t _received[MAX_REGISTER_MEM] = {0};
@@ -259,24 +259,24 @@ errorTypes Tle5012b::readMoreRegisters(uint16_t command, uint16_t data[], updTyp
 	return (checkError);
 }
 
-errorTypes Tle5012b::writeToSensor(uint16_t command, uint16_t dataToWrite, bool changeCRC)
+Tle5012b::Error_t Tle5012b::writeToSensor(uint16_t command, uint16_t dataToWrite, bool changeCRC)
 {
 	uint16_t safety = 0;
 	_command[0] = WRITE_SENSOR | command | SAFE_high;
 	_command[1] = dataToWrite;
 	_spiConnection->setCSPin(mCS);
 	_spiConnection->sendReceiveSpi(_command, 2, &safety, 1);
-	errorTypes checkError = checkSafety(safety, _command[0], &_command[1], 1);
+	Error_t checkError = checkSafety(safety, _command[0], &_command[1], 1);
 	//if we write to a register, which changes the CRC.
 	if (changeCRC)
 	{
-	Serial.println("h45");
+//	Serial.println("h45");
 		checkError = regularCrcUpdate();
 	}
 	return (checkError);
 }
 
-errorTypes Tle5012b::writeTempCoeffUpdate(uint16_t dataToWrite)
+Tle5012b::Error_t Tle5012b::writeTempCoeffUpdate(uint16_t dataToWrite)
 {
 	uint16_t safety = 0;
 	uint16_t readreg = 0;
@@ -285,7 +285,7 @@ errorTypes Tle5012b::writeTempCoeffUpdate(uint16_t dataToWrite)
 	_command[1] = dataToWrite;
 	_spiConnection->setCSPin(mCS);
 	_spiConnection->sendReceiveSpi(_command, 2, &safety, 1);
-	errorTypes checkError = checkSafety(safety, _command[0], &_command[1], 1);
+	Error_t checkError = checkSafety(safety, _command[0], &_command[1], 1);
 	//
 	checkError = readStatus(readreg);
 	if (readreg & 0x0008)
@@ -299,9 +299,9 @@ errorTypes Tle5012b::writeTempCoeffUpdate(uint16_t dataToWrite)
 
 //-----------------------------------------------------------------------------
 // begin CRC functions
-errorTypes Tle5012b::checkSafety(uint16_t safety, uint16_t command, uint16_t* readreg, uint16_t length)
+Tle5012b::Error_t Tle5012b::checkSafety(uint16_t safety, uint16_t command, uint16_t* readreg, uint16_t length)
 {
-	errorTypes errorCheck;
+	Error_t errorCheck;
 	safetyWord = safety;
 
 	if (!((safety) & SYSTEM_ERROR_MASK))
@@ -352,7 +352,7 @@ void Tle5012b::resetSafety()
 	_spiConnection->sendReceiveSpi(&command, 1, receive, 3);
 }
 
-errorTypes Tle5012b::regularCrcUpdate()
+Tle5012b::Error_t Tle5012b::regularCrcUpdate()
 {
 	readBlockCRC();
 	uint8_t temp[16];
@@ -374,85 +374,85 @@ errorTypes Tle5012b::regularCrcUpdate()
 
 //-----------------------------------------------------------------------------
 // begin read functions
-errorTypes Tle5012b::readBlockCRC()
+Tle5012b::Error_t Tle5012b::readBlockCRC()
 {
 	_command[0] = READ_BLOCK_CRC;
 	uint16_t _registers[CRC_NUM_REGISTERS+1] = {0};  // Number of CRC Registers + 1 Register for Safety word
 	_spiConnection->setCSPin(mCS);
 	_spiConnection->sendReceiveSpi(_command, 1, _registers, CRC_NUM_REGISTERS+1);
-	errorTypes checkError = checkSafety(_registers[8], READ_BLOCK_CRC, _registers, 8);
+	Error_t checkError = checkSafety(_registers[8], READ_BLOCK_CRC, _registers, 8);
 	resetSafety();
 	return (checkError);
 }
 
-errorTypes Tle5012b::readStatus(uint16_t &data, updTypes upd, safetyTypes safe)
+Tle5012b::Error_t Tle5012b::readStatus(uint16_t &data, updTypes upd, safetyTypes safe)
 {
 	return (readFromSensor(REG_STAT, data, UPD_low, SAFE_high));
 }
-errorTypes Tle5012b::readActivationStatus(uint16_t &data, updTypes upd, safetyTypes safe)
+Tle5012b::Error_t Tle5012b::readActivationStatus(uint16_t &data, updTypes upd, safetyTypes safe)
 {
 	return (readFromSensor(REG_ACSTAT, data, upd, safe));
 }
-errorTypes Tle5012b::readSIL(uint16_t &data)
+Tle5012b::Error_t Tle5012b::readSIL(uint16_t &data)
 {
 	return (readFromSensor(REG_SIL, data, UPD_low, SAFE_high));
 }
-errorTypes Tle5012b::readIntMode1(uint16_t &data)
+Tle5012b::Error_t Tle5012b::readIntMode1(uint16_t &data)
 {
 	return (readFromSensor(REG_MOD_1, data, UPD_low, SAFE_high));
 }
-errorTypes Tle5012b::readIntMode2(uint16_t &data)
+Tle5012b::Error_t Tle5012b::readIntMode2(uint16_t &data)
 {
 	return (readFromSensor(REG_MOD_2, data, UPD_low, SAFE_high));
 }
-errorTypes Tle5012b::readIntMode3(uint16_t &data)
+Tle5012b::Error_t Tle5012b::readIntMode3(uint16_t &data)
 {
 	return (readFromSensor(REG_MOD_3, data, UPD_low, SAFE_high));
 }
-errorTypes Tle5012b::readIntMode4(uint16_t &data)
+Tle5012b::Error_t Tle5012b::readIntMode4(uint16_t &data)
 {
 	return (readFromSensor(REG_MOD_4, data, UPD_low, SAFE_high));
 }
-errorTypes Tle5012b::readOffsetX(uint16_t &data)
+Tle5012b::Error_t Tle5012b::readOffsetX(uint16_t &data)
 {
 	return (readFromSensor(REG_OFFX, data, UPD_low, SAFE_high));
 }
-errorTypes Tle5012b::readOffsetY(uint16_t &data)
+Tle5012b::Error_t Tle5012b::readOffsetY(uint16_t &data)
 {
 	return (readFromSensor(REG_OFFY, data, UPD_low, SAFE_high));
 }
-errorTypes Tle5012b::readSynch(uint16_t &data)
+Tle5012b::Error_t Tle5012b::readSynch(uint16_t &data)
 {
 	return (readFromSensor(REG_SYNCH, data, UPD_low, SAFE_high));
 }
-errorTypes Tle5012b::readIFAB(uint16_t &data)
+Tle5012b::Error_t Tle5012b::readIFAB(uint16_t &data)
 {
 	return (readFromSensor(REG_IFAB, data, UPD_low, SAFE_high));
 }
-errorTypes Tle5012b::readTempCoeff(uint16_t &data)
+Tle5012b::Error_t Tle5012b::readTempCoeff(uint16_t &data)
 {
 	return (readFromSensor(REG_TCO_Y, data, UPD_low, SAFE_high));
 }
-errorTypes Tle5012b::readTempDMag(uint16_t &data)
+Tle5012b::Error_t Tle5012b::readTempDMag(uint16_t &data)
 {
 	return (readFromSensor(REG_D_MAG, data, UPD_low, SAFE_high));
 }
-errorTypes Tle5012b::readTempIIFCnt(uint16_t &data)
+Tle5012b::Error_t Tle5012b::readTempIIFCnt(uint16_t &data)
 {
 	return (readFromSensor(REG_IIF_CNT, data, UPD_low, SAFE_high));
 }
-errorTypes Tle5012b::readTempRaw(uint16_t &data)
+Tle5012b::Error_t Tle5012b::readTempRaw(uint16_t &data)
 {
 	return (readFromSensor(REG_T_RAW, data, UPD_low, SAFE_high));
 }
-errorTypes Tle5012b::readTempT25(uint16_t &data)
+Tle5012b::Error_t Tle5012b::readTempT25(uint16_t &data)
 {
 	return (readFromSensor(REG_T25O, data, UPD_low, SAFE_high));
 }
-errorTypes Tle5012b::readRawX(int16_t &data)
+Tle5012b::Error_t Tle5012b::readRawX(int16_t &data)
 {
 	uint16_t rawData = 0;
-	errorTypes status = readFromSensor(REG_ADC_X, rawData);
+	Error_t status = readFromSensor(REG_ADC_X, rawData);
 	if (status != NO_ERROR)
 	{
 		return (status);
@@ -460,10 +460,10 @@ errorTypes Tle5012b::readRawX(int16_t &data)
 	data = rawData;
 	return (status);
 }
-errorTypes Tle5012b::readRawY(int16_t &data)
+Tle5012b::Error_t Tle5012b::readRawY(int16_t &data)
 {
 	uint16_t rawData = 0;
-	errorTypes status = readFromSensor(REG_ADC_Y, rawData);
+	Error_t status = readFromSensor(REG_ADC_Y, rawData);
 	if (status != NO_ERROR)
 	{
 		return (status);
@@ -476,15 +476,15 @@ errorTypes Tle5012b::readRawY(int16_t &data)
 
 //-----------------------------------------------------------------------------
 // begin get functions
-errorTypes Tle5012b::getAngleValue(double &angleValue)
+Tle5012b::Error_t Tle5012b::getAngleValue(double &angleValue)
 {
 	int16_t rawAnglevalue = 0;
 	return (getAngleValue(angleValue, rawAnglevalue, UPD_low, SAFE_high));
 }
-errorTypes Tle5012b::getAngleValue(double &angleValue, int16_t &rawAnglevalue, updTypes upd, safetyTypes safe)
+Tle5012b::Error_t Tle5012b::getAngleValue(double &angleValue, int16_t &rawAnglevalue, updTypes upd, safetyTypes safe)
 {
 	uint16_t rawData = 0;
-	errorTypes status = readFromSensor(REG_AVAL, rawData, upd, safe);
+	Error_t status = readFromSensor(REG_AVAL, rawData, upd, safe);
 	if (status != NO_ERROR)
 	{
 		return (status);
@@ -500,15 +500,15 @@ errorTypes Tle5012b::getAngleValue(double &angleValue, int16_t &rawAnglevalue, u
 	return (status);
 }
 
-errorTypes Tle5012b::getTemperature(double &temperature)
+Tle5012b::Error_t Tle5012b::getTemperature(double &temperature)
 {
 	int16_t rawTemp = 0;
 	return (getTemperature(temperature, rawTemp, UPD_low, SAFE_high));
 }
-errorTypes Tle5012b::getTemperature(double &temperature, int16_t &rawTemp, updTypes upd, safetyTypes safe)
+Tle5012b::Error_t Tle5012b::getTemperature(double &temperature, int16_t &rawTemp, updTypes upd, safetyTypes safe)
 {
 	uint16_t rawData = 0;
-	errorTypes status = readFromSensor(REG_FSYNC, rawData, upd, safe);
+	Error_t status = readFromSensor(REG_FSYNC, rawData, upd, safe);
 	if (status != NO_ERROR)
 	{
 		return (status);
@@ -524,10 +524,10 @@ errorTypes Tle5012b::getTemperature(double &temperature, int16_t &rawTemp, updTy
 	return (status);
 }
 
-errorTypes Tle5012b::getNumRevolutions(int16_t &numRev, updTypes upd, safetyTypes safe)
+Tle5012b::Error_t Tle5012b::getNumRevolutions(int16_t &numRev, updTypes upd, safetyTypes safe)
 {
 	uint16_t rawData = 0;
-	errorTypes status = readFromSensor(REG_AREV, rawData, upd, safe);
+	Error_t status = readFromSensor(REG_AREV, rawData, upd, safe);
 	if (status != NO_ERROR)
 	{
 		return (status);
@@ -542,17 +542,17 @@ errorTypes Tle5012b::getNumRevolutions(int16_t &numRev, updTypes upd, safetyType
 	return (status);
 }
 
-errorTypes Tle5012b::getAngleSpeed(double &finalAngleSpeed)
+Tle5012b::Error_t Tle5012b::getAngleSpeed(double &finalAngleSpeed)
 {
 	int16_t rawSpeed = 0;
 	return (getAngleSpeed(finalAngleSpeed, rawSpeed, UPD_low, SAFE_high));
 }
-errorTypes Tle5012b::getAngleSpeed(double &finalAngleSpeed, int16_t &rawSpeed, updTypes upd, safetyTypes safe)
+Tle5012b::Error_t Tle5012b::getAngleSpeed(double &finalAngleSpeed, int16_t &rawSpeed, updTypes upd, safetyTypes safe)
 {
 	int8_t numOfData = 0x5;
 	uint16_t rawData[numOfData];
 
-	errorTypes status = readMoreRegisters(REG_ASPD + numOfData, rawData, upd, safe);
+	Error_t status = readMoreRegisters(REG_ASPD + numOfData, rawData, upd, safe);
 	if (status != NO_ERROR)
 	{
 		return (status);
@@ -592,10 +592,10 @@ errorTypes Tle5012b::getAngleSpeed(double &finalAngleSpeed, int16_t &rawSpeed, u
 	return (status);
 }
 
-errorTypes Tle5012b::getAngleRange(double &angleRange)
+Tle5012b::Error_t Tle5012b::getAngleRange(double &angleRange)
 {
 	uint16_t rawData = 0;
-	errorTypes status = readIntMode2(rawData);
+	Error_t status = readIntMode2(rawData);
 	if (status != NO_ERROR)
 	{
 		return (status);
@@ -611,51 +611,51 @@ errorTypes Tle5012b::getAngleRange(double &angleRange)
 
 //-----------------------------------------------------------------------------
 // begin write functions
-errorTypes Tle5012b::writeIntMode2(uint16_t dataToWrite)
+Tle5012b::Error_t Tle5012b::writeIntMode2(uint16_t dataToWrite)
 {
 	return (writeToSensor(REG_MOD_2, dataToWrite, true));
 }
-errorTypes Tle5012b::writeIntMode3(uint16_t dataToWrite)
+Tle5012b::Error_t Tle5012b::writeIntMode3(uint16_t dataToWrite)
 {
 	return (writeToSensor(REG_MOD_3, dataToWrite, true));
 }
-errorTypes Tle5012b::writeOffsetX(uint16_t dataToWrite)
+Tle5012b::Error_t Tle5012b::writeOffsetX(uint16_t dataToWrite)
 {
 	return (writeToSensor(REG_OFFX, dataToWrite, true));
 }
-errorTypes Tle5012b::writeOffsetY(uint16_t dataToWrite)
+Tle5012b::Error_t Tle5012b::writeOffsetY(uint16_t dataToWrite)
 {
 	return (writeToSensor(REG_OFFY, dataToWrite, true));
 }
-errorTypes Tle5012b::writeSynch(uint16_t dataToWrite)
+Tle5012b::Error_t Tle5012b::writeSynch(uint16_t dataToWrite)
 {
 	return (writeToSensor(REG_SYNCH, dataToWrite, true));
 }
-errorTypes Tle5012b::writeIFAB(uint16_t dataToWrite)
+Tle5012b::Error_t Tle5012b::writeIFAB(uint16_t dataToWrite)
 {
 	return (writeToSensor(REG_IFAB, dataToWrite, true));
 }
-errorTypes Tle5012b::writeIntMode4(uint16_t dataToWrite)
+Tle5012b::Error_t Tle5012b::writeIntMode4(uint16_t dataToWrite)
 {
 	return (writeToSensor(REG_MOD_4, dataToWrite, true));
 }
-errorTypes Tle5012b::writeTempCoeff(uint16_t dataToWrite)
+Tle5012b::Error_t Tle5012b::writeTempCoeff(uint16_t dataToWrite)
 {
 	return (writeToSensor(REG_TCO_Y, dataToWrite, true));
 }
-errorTypes Tle5012b::writeActivationStatus(uint16_t dataToWrite)
+Tle5012b::Error_t Tle5012b::writeActivationStatus(uint16_t dataToWrite)
 {
 	return (writeToSensor(REG_ACSTAT, dataToWrite, false));
 }
-errorTypes Tle5012b::writeIntMode1(uint16_t dataToWrite)
+Tle5012b::Error_t Tle5012b::writeIntMode1(uint16_t dataToWrite)
 {
 	return (writeToSensor(REG_MOD_1, dataToWrite, false));
 }
-errorTypes Tle5012b::writeSIL(uint16_t dataToWrite)
+Tle5012b::Error_t Tle5012b::writeSIL(uint16_t dataToWrite)
 {
 	return (writeToSensor(REG_SIL, dataToWrite, false));
 }
-errorTypes Tle5012b::writeSlaveNumber(uint16_t dataToWrite)
+Tle5012b::Error_t Tle5012b::writeSlaveNumber(uint16_t dataToWrite)
 {
 	return(writeToSensor(WRITE_SENSOR, dataToWrite, false));
 }

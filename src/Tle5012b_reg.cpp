@@ -30,9 +30,9 @@
 
 #include "Tle5012b_reg.h"
 
-errorTypes Tle5012b_reg::readSensorType()
+Tle5012b::Error_t Tle5012b_reg::readSensorType()
 {
-	errorTypes status;
+	Error_t status;
 	uint16_t rawData[3] = {0};
 
 	triggerUpdate();
@@ -80,9 +80,9 @@ errorTypes Tle5012b_reg::readSensorType()
 	return (status);
 }
 
-errorTypes Tle5012b_reg::identifyInterfaceType()
+Tle5012b::Error_t Tle5012b_reg::identifyInterfaceType()
 {
-	errorTypes status = readSensorType();
+	Error_t status = readSensorType();
 	if (status != NO_ERROR) {
 		return (status);
 	}
@@ -155,11 +155,11 @@ void Tle5012b_reg::identify(){
 	}
 }
 
-errorTypes Tle5012b_reg::writeInterfaceType(interfaceType iface)
+Tle5012b::Error_t Tle5012b_reg::writeInterfaceType(interfaceType iface)
 {
 	uint16_t rawData = 0;
 
-	errorTypes status = readIntMode4(rawData);
+	Error_t status = readIntMode4(rawData);
 	if (status != NO_ERROR) {
 		return (status);
 	}
@@ -172,18 +172,18 @@ errorTypes Tle5012b_reg::writeInterfaceType(interfaceType iface)
 	return (status);
 }
 
-errorTypes Tle5012b_reg::resetFirmware()
+Tle5012b::Error_t Tle5012b_reg::resetFirmware()
 {
 	uint16_t rawData = 0x401;
-	errorTypes status = writeActivationStatus(rawData);
+	Error_t status = writeActivationStatus(rawData);
 	return (status);
 }
 
-errorTypes Tle5012b_reg::setCalibration(calibrationMode calMode)
+Tle5012b::Error_t Tle5012b_reg::setCalibration(calibrationMode calMode)
 {
 	uint16_t rawData = 0;
 
-	errorTypes status = readIntMode2(rawData);
+	Error_t status = readIntMode2(rawData);
 	if (status != NO_ERROR) {
 		return (status);
 	}

@@ -32,7 +32,6 @@
 #ifndef TLE5012B_REG_H
 #define TLE5012B_REG_H
 
-//#include "Arduino.h"
 #include "Tle5012b.h"
 
 #define MAX_NUM_REG    0x16   //!< defines the value for temporary data to read all readable registers
@@ -477,14 +476,14 @@ class Tle5012b_reg: public Tle5012b
 	 * @param [in,out] sensorRegister point to the sensor register structure
 	 * @return CRC error type
 	 */
-	errorTypes readSensorType();
+	Error_t readSensorType();
 
 	/*!
 	 * Function identifies the current set interface type
 	 * according some characteristic register settings
 	 * @return CRC error type
 	 */
-	errorTypes identifyInterfaceType();
+	Error_t identifyInterfaceType();
 
 	/*!
 	 * Functions switches between all possible interface types.
@@ -495,13 +494,13 @@ class Tle5012b_reg: public Tle5012b
 	 * @param iface type of interface to switch to
 	 * @return CRC error type
 	 */
-	errorTypes writeInterfaceType(interfaceType iface);
+	Error_t writeInterfaceType(interfaceType iface);
 
 	/*!
 	 * Function reset the Sensor to fuse defaults
 	 * @return CRC error type
 	 */
-	errorTypes resetFirmware();
+	Error_t resetFirmware();
 
 	/*!
 	 * Function set the sensors calibration mode. Keep in mind,
@@ -510,7 +509,7 @@ class Tle5012b_reg: public Tle5012b
 	 * @param [in] calibrationMode the auto calibration mode to set
 	 * @return CRC error type
 	 */
-	errorTypes setCalibration(calibrationMode calMode);
+	Error_t setCalibration(calibrationMode calMode);
 
 
 	private:

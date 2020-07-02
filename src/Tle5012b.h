@@ -110,15 +110,15 @@
 /*!
  * Error types from safety word
  */
-enum errorTypes
-{
-	NO_ERROR               = 0x00,  //!< NO_ERROR = Safety word was OK
-	SYSTEM_ERROR           = 0x01,  //!< SYSTEM_ERROR = over/under voltage, VDD negative, GND off, ROM defect
-	INTERFACE_ACCESS_ERROR = 0x02,  //!< INTERFACE_ACCESS_ERROR = wrong address or wrong lock
-	INVALID_ANGLE_ERROR    = 0x03,  //!< INVALID_ANGLE_ERROR = NO_GMR_A = 1 or NO_GMR_XY = 1
-	ANGLE_SPEED_ERROR      = 0x04,  //!< ANGLE_SPEED_ERROR = combined error, angular speed calculation wrong
-	CRC_ERROR              = 0xFF   //!< CRC_ERROR = Cyclic Redundancy Check (CRC), which includes the STAT and RESP bits wrong
-};
+//enum errorTypes
+//{
+//	NO_ERROR               = 0x00,  //!< NO_ERROR = Safety word was OK
+//	SYSTEM_ERROR           = 0x01,  //!< SYSTEM_ERROR = over/under voltage, VDD negative, GND off, ROM defect
+//	INTERFACE_ACCESS_ERROR = 0x02,  //!< INTERFACE_ACCESS_ERROR = wrong address or wrong lock
+//	INVALID_ANGLE_ERROR    = 0x03,  //!< INVALID_ANGLE_ERROR = NO_GMR_A = 1 or NO_GMR_XY = 1
+//	ANGLE_SPEED_ERROR      = 0x04,  //!< ANGLE_SPEED_ERROR = combined error, angular speed calculation wrong
+//	CRC_ERROR              = 0xFF   //!< CRC_ERROR = Cyclic Redundancy Check (CRC), which includes the STAT and RESP bits wrong
+//};
 
 /*!
   * Set the UPDate bit high (read from update buffer) or low (read directly)
@@ -142,9 +142,26 @@ class Tle5012b
 {
 	public:
 
+    /*!
+     * Error types from safety word
+     */
+    enum Error_t
+    {
+        NO_ERROR               = 0x00,  //!< NO_ERROR = Safety word was OK
+        SYSTEM_ERROR           = 0x01,  //!< SYSTEM_ERROR = over/under voltage, VDD negative, GND off, ROM defect
+        INTERFACE_ACCESS_ERROR = 0x02,  //!< INTERFACE_ACCESS_ERROR = wrong address or wrong lock
+        INVALID_ANGLE_ERROR    = 0x03,  //!< INVALID_ANGLE_ERROR = NO_GMR_A = 1 or NO_GMR_XY = 1
+        ANGLE_SPEED_ERROR      = 0x04,  //!< ANGLE_SPEED_ERROR = combined error, angular speed calculation wrong
+        PAL_ERROR              = 0x05,  //!< PAL_ERROR = PAL interface error
+        CRC_ERROR              = 0xFF   //!< CRC_ERROR = Cyclic Redundancy Check (CRC), which includes the STAT and RESP bits wrong
+    };
+
     class SPI;
+    class Timer;
+    class GPIO;
+
 	//Tle5012b_SPI* _spiConnection;        //!< SPI library for 3/4wire setup
-    SPI * _spiConnection;        //!< SPI library for 3/4wire setup
+
 
 	/*!
 	 * Offset for the slave number register to identify the
@@ -223,10 +240,10 @@ class Tle5012b
 	 * @param [in] cs chip select pin, must be unique for each slave
 	 * @param [in] slave slave offset setting for the SNR register, default is TLE5012B_S0
 	 */
-	errorTypes begin();
-	errorTypes begin(uint8_t cs, slaveNum slave=TLE5012B_S0 );
-	errorTypes begin(Tle5012b::SPI &bus, uint8_t cs, slaveNum slave=TLE5012B_S0 );
-	errorTypes begin(Tle5012b::SPI &bus, uint8_t miso, uint8_t mosi, uint8_t sck, uint8_t cs,slaveNum slave=TLE5012B_S0);
+	Error_t begin();
+	Error_t begin(uint8_t cs, slaveNum slave=TLE5012B_S0 );
+	Error_t begin(Tle5012b::SPI &bus, uint8_t cs, slaveNum slave=TLE5012B_S0 );
+	Error_t begin(Tle5012b::SPI &bus, uint8_t miso, uint8_t mosi, uint8_t sck, uint8_t cs,slaveNum slave=TLE5012B_S0);
 
 	void end();			//!< Switches the sensor off and ends the comunication
 
@@ -254,7 +271,7 @@ class Tle5012b
 	 * ATTENTION: You need a memory chunk of unit16_t * CRC Registers + 1 * uint16_t for the safety word.
 	 * @return CRC error type
 	 */
-	errorTypes readBlockCRC();
+	Error_t readBlockCRC();
 
 	/*!
 	 * General read function for reading _registers from the Tle5012b.
@@ -272,7 +289,7 @@ class Tle5012b
 	 * @param [in] safe generate safety word (default, SAFE_high) or not (SAFE_low)
 	 * @return CRC error type
 	 */
-	errorTypes readFromSensor(uint16_t command, uint16_t &data, updTypes upd=UPD_low, safetyTypes safe=SAFE_high);
+	Error_t readFromSensor(uint16_t command, uint16_t &data, updTypes upd=UPD_low, safetyTypes safe=SAFE_high);
 
 	/*!
 	 * Can be used to read 1 or more consecutive _registers, and the values
@@ -285,7 +302,7 @@ class Tle5012b
 	 * @param [in] safe generate safety word (default, SAFE_high) or no (SAFE_low)
 	 * @return CRC error type
 	 */
-	errorTypes readMoreRegisters(uint16_t command, uint16_t data[], updTypes upd=UPD_low, safetyTypes safe=SAFE_high);
+	Error_t readMoreRegisters(uint16_t command, uint16_t data[], updTypes upd=UPD_low, safetyTypes safe=SAFE_high);
 
 	/*!
 	 * This functions reads the main status word for the sensor,
@@ -295,7 +312,7 @@ class Tle5012b
 	 * @param [in] safe generate safety word (default, SAFE_high) or no (SAFE_low)
 	 * @return CRC error type
 	 */
-	errorTypes readStatus(uint16_t &data, updTypes upd=UPD_low, safetyTypes safe=SAFE_high);
+	Error_t readStatus(uint16_t &data, updTypes upd=UPD_low, safetyTypes safe=SAFE_high);
 
 	/*!
 	 * This functions reads activation status word for the sensor,
@@ -305,7 +322,7 @@ class Tle5012b
 	 * @param [in] safe generate safety word (default, SAFE_high) or no (SAFE_low)
 	 * @return CRC error type
 	 */
-	errorTypes readActivationStatus(uint16_t &data, updTypes upd=UPD_low, safetyTypes safe=SAFE_high);
+	Error_t readActivationStatus(uint16_t &data, updTypes upd=UPD_low, safetyTypes safe=SAFE_high);
 
 	/*!
 	 * The next functions are used primarily for storing the parameters and
@@ -314,35 +331,35 @@ class Tle5012b
 	 * @param [out] data where the data received from the _registers will be stored
 	 * @return CRC error type
 	 */
-	errorTypes readActiveStatus(uint16_t &data);    //!< read register offset 0x01
-	errorTypes readIntMode1(uint16_t &data);        //!< read register offset 0x06
-	errorTypes readSIL(uint16_t &data);             //!< read register offset 0x07
-	errorTypes readIntMode2(uint16_t &data);        //!< read register offset 0x08
-	errorTypes readIntMode3(uint16_t &data);        //!< read register offset 0x09
-	errorTypes readOffsetX(uint16_t &data);         //!< read register offset 0x0A
-	errorTypes readOffsetY(uint16_t &data);         //!< read register offset 0x0B
-	errorTypes readSynch(uint16_t &data);           //!< read register offset 0x0C
-	errorTypes readIFAB(uint16_t &data);            //!< read register offset 0x0D
-	errorTypes readIntMode4(uint16_t &data);        //!< read register offset 0x0E
-	errorTypes readTempCoeff(uint16_t &data);       //!< read register offset 0x0F
-	errorTypes readTempDMag(uint16_t &data);        //!< read register offset 0x14
-	errorTypes readTempRaw(uint16_t &data);         //!< read register offset 0x15
-	errorTypes readTempIIFCnt(uint16_t &data);      //!< read register offset 0x20
-	errorTypes readTempT25(uint16_t &data);         //!< read register offset 0x30
+	Error_t readActiveStatus(uint16_t &data);    //!< read register offset 0x01
+	Error_t readIntMode1(uint16_t &data);        //!< read register offset 0x06
+	Error_t readSIL(uint16_t &data);             //!< read register offset 0x07
+	Error_t readIntMode2(uint16_t &data);        //!< read register offset 0x08
+	Error_t readIntMode3(uint16_t &data);        //!< read register offset 0x09
+	Error_t readOffsetX(uint16_t &data);         //!< read register offset 0x0A
+	Error_t readOffsetY(uint16_t &data);         //!< read register offset 0x0B
+	Error_t readSynch(uint16_t &data);           //!< read register offset 0x0C
+	Error_t readIFAB(uint16_t &data);            //!< read register offset 0x0D
+	Error_t readIntMode4(uint16_t &data);        //!< read register offset 0x0E
+	Error_t readTempCoeff(uint16_t &data);       //!< read register offset 0x0F
+	Error_t readTempDMag(uint16_t &data);        //!< read register offset 0x14
+	Error_t readTempRaw(uint16_t &data);         //!< read register offset 0x15
+	Error_t readTempIIFCnt(uint16_t &data);      //!< read register offset 0x20
+	Error_t readTempT25(uint16_t &data);         //!< read register offset 0x30
 
 	/*!
 	 * The rawX value is signed 16 bit value
 	 * @param data pointer to 16bit word
 	 * @return CRC error type
 	 */
-	errorTypes readRawX(int16_t &data);
+	Error_t readRawX(int16_t &data);
 
 	/*!
 	 * The rawY value is signed 16 bit value
 	 * @param data pointer to 16bit word
 	 * @return CRC error type
 	 */
-	errorTypes readRawY(int16_t &data);
+	Error_t readRawY(int16_t &data);
 
 	/*!
 	 * returns the Angle Range
@@ -350,7 +367,7 @@ class Tle5012b
 	 * @param angleRange pointer to 16bit double value
 	 * @return CRC error type
 	 */
-	errorTypes getAngleRange(double &angleRange);
+	Error_t getAngleRange(double &angleRange);
 
 	/*!
 	 * Returns the angleValue calculated on the base of a 15 bit signed integer.
@@ -358,7 +375,7 @@ class Tle5012b
 	 * @param [in,out] angleValue pointer to 16bit double angle value
 	 * @return CRC error type
 	 */
-	errorTypes getAngleValue(double &angleValue);
+	Error_t getAngleValue(double &angleValue);
 	/*!
 	 * Same function as before but also returns a pointer to the raw data
 	 * @param [in,out] angleValue pointer to 16bit double angle value
@@ -367,7 +384,7 @@ class Tle5012b
 	 * @param [in] safe generate safety word (default, SAFE_high) or no (SAFE_low)
 	 * @return CRC error type
 	 */
-	errorTypes getAngleValue(double &angleValue, int16_t &rawAnglevalue, updTypes upd=UPD_low, safetyTypes safe=SAFE_high);
+	Error_t getAngleValue(double &angleValue, int16_t &rawAnglevalue, updTypes upd=UPD_low, safetyTypes safe=SAFE_high);
 
 	/*!
 	 * Returns the number of revolutions done from the angle value which is a 9 bit signed integer.
@@ -379,7 +396,7 @@ class Tle5012b
 	 * @param [in] safe generate safety word (default, SAFE_high) or no (SAFE_low)
 	 * @return CRC error type
 	 */
-	errorTypes getNumRevolutions(int16_t &numRev, updTypes upd=UPD_low, safetyTypes safe=SAFE_high);
+	Error_t getNumRevolutions(int16_t &numRev, updTypes upd=UPD_low, safetyTypes safe=SAFE_high);
 
 	/*!
 	 * Return the temperature.
@@ -388,7 +405,7 @@ class Tle5012b
 	 * @param [in,out] temp pointer to 16bit double value of the temperature
 	 * @return CRC error type
 	 */
-	errorTypes getTemperature(double &temp);
+	Error_t getTemperature(double &temp);
 	/*!
 	 * Same as above but also returns a pointer to the raw data
 	 * @param [in,out] temp pointer to 16bit double value of the temperature
@@ -397,7 +414,7 @@ class Tle5012b
 	 * @param [in] safe generate safety word (default, SAFE_high) or no (SAFE_low)
 	 * @return CRC error type
 	 */
-	errorTypes getTemperature(double &temp, int16_t &rawTemp, updTypes upd=UPD_low, safetyTypes safe=SAFE_high);
+	Error_t getTemperature(double &temp, int16_t &rawTemp, updTypes upd=UPD_low, safetyTypes safe=SAFE_high);
 
 	/*!
 	 * Returns the calculated angle speed.
@@ -406,7 +423,7 @@ class Tle5012b
 	 * @param [in,out] angleSpeed pointer to 16bit double value
 	 * @return CRC error type
 	 */
-	errorTypes getAngleSpeed(double &angleSpeed);
+	Error_t getAngleSpeed(double &angleSpeed);
 	/*!
 	 * Same as above but also returns a pointer to the raw data
 	 * @param [in,out] angleSpeed angleSpeed pointer to 16bit double value
@@ -415,14 +432,14 @@ class Tle5012b
 	 * @param [in] safe generate safety word (default, SAFE_high) or no (SAFE_low)
 	 * @return CRC error type
 	 */
-	errorTypes getAngleSpeed(double &angleSpeed,int16_t &rawSpeed, updTypes upd=UPD_low, safetyTypes safe=SAFE_high);
+	Error_t getAngleSpeed(double &angleSpeed,int16_t &rawSpeed, updTypes upd=UPD_low, safetyTypes safe=SAFE_high);
 
 	/*!
 	 * Function sets the SNR register with the correct slave number
 	 * @param [in] dataToWrite the new data that will be written to the register
 	 * @return CRC error type
 	 */
-	errorTypes writeSlaveNumber(uint16_t dataToWrite);
+	Error_t writeSlaveNumber(uint16_t dataToWrite);
 
 	/*!
 	 * General write function for writing registers to the Tle5012b. The safety flag will be
@@ -433,36 +450,41 @@ class Tle5012b
 	 *        so that we don't need to read all the register again to calculate the CRC
 	 * @return CRC error type
 	 */
-	errorTypes writeToSensor(uint16_t command, uint16_t dataToWrite, bool changeCRC);
+	Error_t writeToSensor(uint16_t command, uint16_t dataToWrite, bool changeCRC);
 
 	/*!
 	 * This function is used in order to update the CRC in the register 0F(second byte)
 	 * @param [in] dataToWrite the new data that will be written to the register
 	 * @return CRC error type
 	 */
-	errorTypes writeTempCoeffUpdate(uint16_t dataToWrite);
+	Error_t writeTempCoeffUpdate(uint16_t dataToWrite);
 
 	/*!
 	 * Standard function used for updating the CRC
 	 * @param [in] dataToWrite the new data that will be written to the register
 	 * @return CRC error type
 	 */
-	errorTypes writeActivationStatus(uint16_t dataToWrite);    //!< write register offset 0x01
-	errorTypes writeIntMode1(uint16_t dataToWrite);            //!< write register offset 0x06
-	errorTypes writeSIL(uint16_t dataToWrite);                 //!< write register offset 0x07
-	errorTypes writeIntMode2(uint16_t dataToWrite);            //!< write register offset 0x08
-	errorTypes writeIntMode3(uint16_t dataToWrite);            //!< write register offset 0x09
-	errorTypes writeOffsetX(uint16_t dataToWrite);             //!< write register offset 0x0A
-	errorTypes writeOffsetY(uint16_t dataToWrite);             //!< write register offset 0x0B
-	errorTypes writeSynch(uint16_t dataToWrite);               //!< write register offset 0x0C
-	errorTypes writeIFAB(uint16_t dataToWrite);                //!< write register offset 0x0D
-	errorTypes writeIntMode4(uint16_t dataToWrite);            //!< write register offset 0x0E
-	errorTypes writeTempCoeff(uint16_t dataToWrite);           //!< write register offset 0x0F
+	Error_t writeActivationStatus(uint16_t dataToWrite);    //!< write register offset 0x01
+	Error_t writeIntMode1(uint16_t dataToWrite);            //!< write register offset 0x06
+	Error_t writeSIL(uint16_t dataToWrite);                 //!< write register offset 0x07
+	Error_t writeIntMode2(uint16_t dataToWrite);            //!< write register offset 0x08
+	Error_t writeIntMode3(uint16_t dataToWrite);            //!< write register offset 0x09
+	Error_t writeOffsetX(uint16_t dataToWrite);             //!< write register offset 0x0A
+	Error_t writeOffsetY(uint16_t dataToWrite);             //!< write register offset 0x0B
+	Error_t writeSynch(uint16_t dataToWrite);               //!< write register offset 0x0C
+	Error_t writeIFAB(uint16_t dataToWrite);                //!< write register offset 0x0D
+	Error_t writeIntMode4(uint16_t dataToWrite);            //!< write register offset 0x0E
+	Error_t writeTempCoeff(uint16_t dataToWrite);           //!< write register offset 0x0F
 
 	safetyWord safetyStatus;
 	uint16_t safetyWord;                     //!< the last fetched safety word
 
 	private:
+
+
+    SPI     * _spiConnection;               //!< SPI library for 3/4wire setup
+    Timer   * timer;                        //!< Class timer
+    GPIO    * enable;                       //!< GPIO output to switch on/off the sensor
 
 	uint16_t _command[2];                    //!< command write data [0] = command [1] = data to write
 	uint16_t _received[MAX_REGISTER_MEM];    //!< fetched data from sensor with last word = safety word
@@ -475,7 +497,7 @@ class Tle5012b
 	 * stores the value in 0F(second byte)
 	 * @return CRC error type
 	 */
-	errorTypes regularCrcUpdate();
+	Error_t regularCrcUpdate();
 
 	/*!
 	 * checks the safety by looking at the safety word and calculating
@@ -486,7 +508,7 @@ class Tle5012b
 	 * @param length the length of the data structure
 	 * @return CRC error type
 	 */
-	errorTypes checkSafety(uint16_t safety, uint16_t command, uint16_t* readreg, uint16_t length);
+	Error_t checkSafety(uint16_t safety, uint16_t command, uint16_t* readreg, uint16_t length);
 
 	/*!
 	 * When an error occurs in the safety word, the error bit remains 0(error),
