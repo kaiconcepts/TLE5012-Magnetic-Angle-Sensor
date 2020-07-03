@@ -8,7 +8,6 @@
 #include "tle5012b-pal-gpio.hpp"
 #include "wiced_platform.h"
 
-
 class GPIOWiced : virtual public Tle5012b::GPIO
 {
     private:
@@ -33,8 +32,6 @@ class GPIOWiced : virtual public Tle5012b::GPIO
         Tle5012b::Error_t       enable        ();
         Tle5012b::Error_t       disable       ();
 };
-
-/** @} */
 
 #endif /** TLE5012B_FRAMEWORK **/
 #endif /** TLE5012B_PAL_WICED_HPP_ **/

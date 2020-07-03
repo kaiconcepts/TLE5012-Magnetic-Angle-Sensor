@@ -21,8 +21,8 @@ $(NAME)_SOURCES  := src/Tle5012b.cpp											\
 					src/framework/wiced-43xxx/pal/tle5012b-pal-gpio-wiced.cpp	\
 					src/framework/wiced-43xxx/pal/tle5012b-pal-timer-wiced.cpp	\
 					src/framework/wiced-43xxx/pal/tle5012b-pal-spi-wiced.cpp	\
-#					src/framework/wiced-43xxx/wrapper/tle5012b-wiced.cpp		\
-#					src/framework/wiced-43xxx/wrapper/tle5012b-platf-wiced.cpp	
+					src/framework/wiced-43xxx/wrapper/tle5012b-wiced.cpp		\
+					src/framework/wiced-43xxx/wrapper/tle5012b-platf-wiced.cpp	
 #					#src/Tle5012b_4wire.cpp	\
 #					#src/util/Tle5012b_SPI.cpp 
 					

@@ -223,6 +223,7 @@ class Tle5012b
 	
 	Tle5012b();			//!< constructor for the Sensor
 	~Tle5012b();		//!< destructor stops the Sensor
+	Tle5012b(SPI * bus, Timer * timer, GPIO * power);
 
 	/**
 	 * All these functions cover the SPI interface and should be implemented
@@ -242,8 +243,8 @@ class Tle5012b
 	 */
 	Error_t begin();
 	Error_t begin(uint8_t cs, slaveNum slave=TLE5012B_S0 );
-	Error_t begin(Tle5012b::SPI &bus, uint8_t cs, slaveNum slave=TLE5012B_S0 );
-	Error_t begin(Tle5012b::SPI &bus, uint8_t miso, uint8_t mosi, uint8_t sck, uint8_t cs,slaveNum slave=TLE5012B_S0);
+	Error_t begin(SPI &bus, uint8_t cs, slaveNum slave=TLE5012B_S0 );
+	Error_t begin(SPI &bus, uint8_t miso, uint8_t mosi, uint8_t sck, uint8_t cs,slaveNum slave=TLE5012B_S0);
 
 	void end();			//!< Switches the sensor off and ends the comunication
 
@@ -484,7 +485,7 @@ class Tle5012b
 
     SPI     * _spiConnection;               //!< SPI library for 3/4wire setup
     Timer   * timer;                        //!< Class timer
-    GPIO    * enable;                       //!< GPIO output to switch on/off the sensor
+    GPIO    * power;                        //!< GPIO output to switch on/off the sensor
 
 	uint16_t _command[2];                    //!< command write data [0] = command [1] = data to write
 	uint16_t _received[MAX_REGISTER_MEM];    //!< fetched data from sensor with last word = safety word

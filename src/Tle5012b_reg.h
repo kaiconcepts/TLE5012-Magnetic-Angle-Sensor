@@ -67,6 +67,8 @@ class Tle5012b_reg: public Tle5012b
 		SSC       //!< SSC Synchronous Serial Communication (SSC)
 	};
 
+    static char * interfaceNameStr[];
+
 	/*!
 	 * List of possible Sensor types and PCB variants
 	 * with and without attached XMC2Go
@@ -79,6 +81,8 @@ class Tle5012b_reg: public Tle5012b
 		TLE5012B_E5020,     //!< TLE5012B_E5020
 		TLE5012B_E9000,     //!< TLE5012B_E9000 Sensor2Go variant
 	};
+
+	static char * sensorTypeStr[];
 
 	using Tle5012b::Tle5012b;   //!< Using the inherited constructor
 
@@ -319,7 +323,7 @@ class Tle5012b_reg: public Tle5012b
 	typedef struct  	        //!< Synchronicity offset 0x0c
 	{
 		int16_t  SYNCH;			//!< bits 15:4 12-bit signed integer value of amplitude synchronicity
-		uint8_t  Reserverd1     //!< bits 3:0
+		uint8_t  Reserverd1;    //!< bits 3:0
 		uint16_t reg;			//!< the register value
 
 		uint8_t fetch_Reserverd1(uint16_t reg) {Reserverd1 = (reg & 0xF);return (Reserverd1);}
@@ -374,9 +378,10 @@ class Tle5012b_reg: public Tle5012b
 		}
 	}mod4_t;
 
-	typedef struct tcoy_t {		//!< TCO_Y Temperature Coefficient register offset 0x0f
-		int8_t TCOYT;			//!< bits 15:9 7-bit signed integer value of Y-offset temperature coefficient.
-		bool SBIST;			//!< bits 8:8 Startup-BIST
+	typedef struct  		    //!< TCO_Y Temperature Coefficient register offset 0x0f
+	{
+		int8_t   TCOYT;			//!< bits 15:9 7-bit signed integer value of Y-offset temperature coefficient.
+		bool     SBIST;			//!< bits 8:8 Startup-BIST
 		uint16_t CRCPAR;		//!< bits 7:0 CRC of Parameters
 		uint16_t reg;			//!< the register value
 
@@ -389,50 +394,55 @@ class Tle5012b_reg: public Tle5012b
 			}
 			return (TCOYT);
 		}
-	};
+	}tcoy_t;
 
-	typedef struct adc_t {		//!< ADC_X offset 0x10, ADC_Y offset 0x11
+	typedef struct  		    //!< ADC_X offset 0x10, ADC_Y offset 0x11
+	{
 		int16_t ADCX;			//!< bits 15:0 ADC value of X-GMR
 		int16_t ADCY;			//!< bits 15:0 ADC value of Y-GMR
-	};
+	}adc_t;
 
-	typedef struct dmag_t {		//!< D_Mag vector magnitude offset 0x14
-		uint8_t Reserverd1;		//!< bits 15:10
+	typedef struct 		        //!< D_Mag vector magnitude offset 0x14
+	{
+		uint8_t  Reserverd1;    //!< bits 15:10
 		uint16_t MAG;			//!< bits 9:0 Unsigned Angle Vector Magnitude after X, Y error compensation (due to temperature).
 		uint16_t reg;			//!< the register value
 
 		uint16_t fetch_MAG(uint16_t reg) {MAG = (reg & 0x3FF);return (MAG);}
 		uint8_t fetch_Reserverd1(uint16_t reg) {Reserverd1 = (reg & 0xFC00) >> 10;return (Reserverd1);}
-	};
+	}dmag_t;
 
-	typedef struct traw_t {		//!< T_RAW temperature raw data offset 0x15
-		bool    TTGL;			//!< bits 15:15 Temperature Sensor Raw-Value Toggle toggles after every new temperature value
-		uint8_t Reserverd1;		//!< bits 14:10
+	typedef struct  		    //!< T_RAW temperature raw data offset 0x15
+	{
+		bool     TTGL;			//!< bits 15:15 Temperature Sensor Raw-Value Toggle toggles after every new temperature value
+		uint8_t  Reserverd1;	//!< bits 14:10
 		uint16_t TRAW;			//!< bits 9:0 Temperature Sensor Raw-Value at ADC without offset
 		uint16_t reg;			//!< the register value
 
 		bool fetch_TRAW(uint16_t reg) {TRAW = (reg & 0x3FF);return (TRAW);}
 		uint8_t fetch_Reserverd1(uint16_t reg) {Reserverd1 = (reg & 0xFC00) >> 10;return (Reserverd1);}
 		uint16_t fetch_TTGL(uint16_t reg) {TTGL = (reg & 0x8000) >> 15;return (TTGL);}
-	};
+	}traw_t;
 
-	typedef struct iifcnt_t {	//!< IIF counter value offset 0x20
+	typedef struct  	        //!< IIF counter value offset 0x20
+	{
 		bool     Reserverd1;    //!< bits 15:14
 		uint16_t IIFCNT;		//!< bits 14:0 14 bit counter value of IIF increments
 		uint16_t reg;			//!< the register value
 
 		uint16_t fetch_IIFCNT(uint16_t reg) {IIFCNT = (reg & 0x7FFF);return (IIFCNT);}
 		bool fetch_Reserverd1(uint16_t reg) {Reserverd1 = (reg & 0x8000) >> 15;return (Reserverd1);}
-	};
+	}iifcnt_t;
 
-	typedef struct t250_t {		//!< register T250 offset 0x30
+	typedef struct  		    //!< register T250 offset 0x30
+	{
 		int16_t  T250;			//!< bits 15:9 Signed offset value at 25°C temperature; 1dig=0.36°C.
 		uint16_t Reserverd1;	//!< bit 8:0
 		uint16_t reg;			//!< the register value
 
 		int16_t fetch_T250(uint16_t reg) {T250 = (reg & 0x1FFF);return (T250);}
 		uint16_t fetch_Reserverd1(uint16_t reg) {Reserverd1 = (reg & 0xFE00) >> 9;return (Reserverd1);}
-	};
+	}t250_t;
 
 	typedef struct {
 		uint16_t registers[MAX_NUM_REG];	//!< raw register memory
@@ -440,7 +450,7 @@ class Tle5012b_reg: public Tle5012b
 		sensorType sensorBoard;				//!< enum identify the PCM board type
 		char * interfaceName;
 		char * sensorName;
-		char * nameOfRegister[MAX_NUM_REG] = {
+		const char * nameOfRegister[MAX_NUM_REG] = {
 				"STAT  ","ACSTAT","AVAL  ","ASPD  ","AREV  ",
 				"FSYNC ","MOD1  ","SIL   ","MOD2  ","MOD3  ",
 				"OFFX  ","OFFY  ","SYNCH ","IFAB  ","MOD4  ",
@@ -454,20 +464,20 @@ class Tle5012b_reg: public Tle5012b
 		arev_t arev;
 		fsync_t fsync;
 		mod1_t mod1;
-		struct sil_t sil;
-		struct mod2_t mod2;
-		struct mod3_t mod3;
-		struct offx_t offx;
-		struct offy_t offy;
-		struct synch_t synch;
-		struct ifab_t ifab;
-		struct mod4_t mod4;
-		struct tcoy_t tcoy;
-		struct adc_t adc;
-		struct dmag_t dmag;
-		struct traw_t traw;
-		struct iifcnt_t iifcnt;
-		struct t250_t t250;
+		sil_t sil;
+		mod2_t mod2;
+		mod3_t mod3;
+		offx_t offx;
+		offy_t offy;
+		synch_t synch;
+		ifab_t ifab;
+		mod4_t mod4;
+		tcoy_t tcoy;
+		adc_t adc;
+		dmag_t dmag;
+		traw_t traw;
+		iifcnt_t iifcnt;
+		t250_t t250;
 	} regSensor_t;
 
 	regSensor_t sensorRegister;		//!< sensor register read and separation

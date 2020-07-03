@@ -30,6 +30,24 @@
 
 #include "Tle5012b_reg.h"
 
+char * Tle5012b_reg::interfaceNameStr[5] =
+{
+    (char *)"IIF",
+    (char *)"PWM",
+    (char *)"HSM",
+    (char *)"SPC",
+    (char *)"SSC"
+};
+
+char * Tle5012b_reg::sensorTypeStr[5] =
+{
+    (char *)"TLE5012B_E100",        //!< TLE5012B_E1000 Sensor2Go variant
+    (char *)"TLE5012B_E3005",       //!< TLE5012B_E3005
+    (char *)"TLE5012B_E5000",       //!< TLE5012B_E5000 Sensor2Go variant
+    (char *)"TLE5012B_E5020",       //!< TLE5012B_E5020
+    (char *)"TLE5012B_E9000",       //!< TLE5012B_E9000 Sensor2Go variant
+};
+
 Tle5012b::Error_t Tle5012b_reg::readSensorType()
 {
 	Error_t status;
@@ -126,33 +144,33 @@ void Tle5012b_reg::identify(){
 	{
 		case IIF:
 			sensorRegister.interface = IIF;
-			sensorRegister.interfaceName = "IIF";
+			sensorRegister.interfaceName = Tle5012b_reg::interfaceNameStr[IIF];
 			sensorRegister.sensorBoard = TLE5012B_E1000;
-			sensorRegister.sensorName = "TLE5012B_E1000";
+			sensorRegister.sensorName = Tle5012b_reg::interfaceNameStr[TLE5012B_E1000];
 			break;
 		case PWM:
 			sensorRegister.interface = PWM;
-			sensorRegister.interfaceName = "PWM";
+			sensorRegister.interfaceName = Tle5012b_reg::interfaceNameStr[PWM];
 			if (sensorRegister.ifab.FIRUDR == 0x0 && sensorRegister.ifab.IFABOD == 0x0 )
 			{
 				sensorRegister.sensorBoard = TLE5012B_E5000;
-				sensorRegister.sensorName = "TLE5012B_E5000";
+				sensorRegister.sensorName = Tle5012b_reg::interfaceNameStr[TLE5012B_E5000];
 			}else{
 				sensorRegister.sensorBoard = TLE5012B_E5020;
-				sensorRegister.sensorName = "TLE5012B_E5020";
+				sensorRegister.sensorName = Tle5012b_reg::interfaceNameStr[TLE5012B_E5020];
 			}
 			break;
 		case HSM:
-			sensorRegister.interfaceName = "HSM";
+			sensorRegister.interfaceName = Tle5012b_reg::interfaceNameStr[HSM];
 			sensorRegister.interface = HSM;
 			sensorRegister.sensorBoard = TLE5012B_E3005;
-			sensorRegister.sensorName = "TLE5012B_E3005";
+			sensorRegister.sensorName = Tle5012b_reg::interfaceNameStr[TLE5012B_E3005];
 			break;
 		case SPC:
-			sensorRegister.interfaceName = "SPC";
+			sensorRegister.interfaceName = Tle5012b_reg::interfaceNameStr[SPC];
 			sensorRegister.interface = SPC;
 			sensorRegister.sensorBoard = TLE5012B_E9000;
-			sensorRegister.sensorName = "TLE5012B_E9000";
+			sensorRegister.sensorName = Tle5012b_reg::interfaceNameStr[TLE5012B_E9000];
 			break;
 	}
 }
