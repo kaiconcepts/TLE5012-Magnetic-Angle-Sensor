@@ -44,6 +44,7 @@
 
 //#include "Arduino.h"
 #include <stdint.h>
+#include <stddef.h>
 //#include "util/Tle5012b_SPI.h"
 
 #ifndef TLE5012B_H
@@ -223,28 +224,31 @@ class Tle5012b
 	
 	Tle5012b();			//!< constructor for the Sensor
 	~Tle5012b();		//!< destructor stops the Sensor
-	Tle5012b(SPI * bus, Timer * timer, GPIO * power);
+	Tle5012b(SPI      * spi,
+	         Timer    * timer,
+	         GPIO     * power = NULL,
+	         slaveNum   slave=TLE5012B_S0 );
 
-	/**
-	 * All these functions cover the SPI interface and should be implemented
-	 * into XMC SPI wrapper.
-	 * In 3wire SPI mode miso and mosi are connected together, so read and
-	 * write operations are on the same line. In 4wire more read and write are
-	 * separated. The system clock SCK and the sensor enable EN line are used
-	 * for all slaves whereas the chip select line CS must we set unique for
-	 * each slave. A max of four slaves on one SPI interface are possible
-	 * @return CRC error type
-	 * @param [in] bus a SPIClass object
-	 * @param [in] miso MISO pin for the SPI/SSC interface
-	 * @param [in] mosi MOSI pin for the SPI/SSC interface
-	 * @param [in] sck system clock pin for external sensor clock setting
-	 * @param [in] cs chip select pin, must be unique for each slave
-	 * @param [in] slave slave offset setting for the SNR register, default is TLE5012B_S0
-	 */
+//	/**
+//	 * All these functions cover the SPI interface and should be implemented
+//	 * into XMC SPI wrapper.
+//	 * In 3wire SPI mode miso and mosi are connected together, so read and
+//	 * write operations are on the same line. In 4wire more read and write are
+//	 * separated. The system clock SCK and the sensor enable EN line are used
+//	 * for all slaves whereas the chip select line CS must we set unique for
+//	 * each slave. A max of four slaves on one SPI interface are possible
+//	 * @return CRC error type
+//	 * @param [in] bus a SPIClass object
+//	 * @param [in] miso MISO pin for the SPI/SSC interface
+//	 * @param [in] mosi MOSI pin for the SPI/SSC interface
+//	 * @param [in] sck system clock pin for external sensor clock setting
+//	 * @param [in] cs chip select pin, must be unique for each slave
+//	 * @param [in] slave slave offset setting for the SNR register, default is TLE5012B_S0
+//	 */
 	Error_t begin();
-	Error_t begin(uint8_t cs, slaveNum slave=TLE5012B_S0 );
-	Error_t begin(SPI &bus, uint8_t cs, slaveNum slave=TLE5012B_S0 );
-	Error_t begin(SPI &bus, uint8_t miso, uint8_t mosi, uint8_t sck, uint8_t cs,slaveNum slave=TLE5012B_S0);
+//	Error_t begin(uint8_t cs, slaveNum slave=TLE5012B_S0 );
+//	Error_t begin(SPI &bus, uint8_t cs, slaveNum slave=TLE5012B_S0 );
+//	Error_t begin(SPI &bus, uint8_t miso, uint8_t mosi, uint8_t sck, uint8_t cs,slaveNum slave=TLE5012B_S0);
 
 	void end();			//!< Switches the sensor off and ends the comunication
 
@@ -483,9 +487,9 @@ class Tle5012b
 	private:
 
 
-    SPI     * _spiConnection;               //!< SPI library for 3/4wire setup
-    Timer   * timer;                        //!< Class timer
-    GPIO    * power;                        //!< GPIO output to switch on/off the sensor
+    SPI     * spi;               //!< SPI library for 3/4wire setup
+    Timer   * timer;             //!< Class timer
+    GPIO    * power;             //!< GPIO output to switch on/off the sensor
 
 	uint16_t _command[2];                    //!< command write data [0] = command [1] = data to write
 	uint16_t _received[MAX_REGISTER_MEM];    //!< fetched data from sensor with last word = safety word

@@ -44,6 +44,9 @@
 
 #include <string.h>
 #include "Tle5012b.h"
+#include "../pal/Tle5012b-pal-gpio.hpp"
+#include "../pal/Tle5012b-pal-timer.hpp"
+#include "../pal/Tle5012b-pal-spi.hpp"
 
 //-----------------------------------------------------------------------------
 // none_class functions
@@ -156,6 +159,15 @@ Tle5012b::Tle5012b()
 //	mSCK = SCK;
 }
 
+Tle5012b::Tle5012b(SPI      * spi,
+                   Timer    * timer,
+                   GPIO     * power,
+                   slaveNum   slave )
+: spi(spi), timer(timer), power(power), mSlave(slave)
+{
+
+}
+
 Tle5012b::~Tle5012b()
 {
 	end();
@@ -163,30 +175,43 @@ Tle5012b::~Tle5012b()
 
 Tle5012b::Error_t Tle5012b::begin()
 {
-	return (begin(*_spiConnection, mMISO, mMOSI, mSCK, mCS, mSlave));
+    Error_t err = NO_ERROR;
+
+    err = spi->init();
+    enableSensor();
+//  writeSlaveNumber(mSlave);
+//  return (readBlockCRC());
+
+    return err;
 }
-Tle5012b::Error_t Tle5012b::begin(uint8_t cs, slaveNum slave)
-{
-	return (begin(*_spiConnection, mMISO, mMOSI, mSCK, cs, slave ));
-}
-Tle5012b::Error_t Tle5012b::begin(SPI &bus, uint8_t cs, slaveNum slave)
-{
-	return (begin(bus, mMISO, mMOSI, mSCK, cs, slave ));
-}
-Tle5012b::Error_t Tle5012b::begin(SPI &bus, uint8_t miso, uint8_t mosi, uint8_t sck, uint8_t cs, slaveNum slave)
-{
-	mCS = cs;
-	mMISO = miso;
-	mMOSI = mosi;
-	mSCK = sck;
-	mSlave = slave;
-	_spiConnection = &bus;
-	//TODO: begin
-//	_spiConnection->begin( miso, mosi, sck, cs);
-	enableSensor();
-	writeSlaveNumber(mSlave);
-	return (readBlockCRC());
-}
+
+//Tle5012b::Error_t Tle5012b::begin()
+//{
+//	return (begin(*_spiConnection, mMISO, mMOSI, mSCK, mCS, mSlave));
+//}
+//Tle5012b::Error_t Tle5012b::begin(uint8_t cs, slaveNum slave)
+//{
+//	return (begin(*_spiConnection, mMISO, mMOSI, mSCK, cs, slave ));
+//}
+//Tle5012b::Error_t Tle5012b::begin(SPI &bus, uint8_t cs, slaveNum slave)
+//{
+//	return (begin(bus, mMISO, mMOSI, mSCK, cs, slave ));
+//}
+//Tle5012b::Error_t Tle5012b::begin(SPI &bus, uint8_t miso, uint8_t mosi, uint8_t sck, uint8_t cs, slaveNum slave)
+//{
+//	mCS = cs;
+//	mMISO = miso;
+//	mMOSI = mosi;
+//	mSCK = sck;
+//	mSlave = slave;
+////	_spiConnection = &bus;
+//	//TODO: begin
+////	_spiConnection->begin( miso, mosi, sck, cs);
+//	spi->init();
+//	enableSensor();
+//	writeSlaveNumber(mSlave);
+//	return (readBlockCRC());
+//}
 
 void Tle5012b::end()
 {
@@ -210,6 +235,7 @@ void Tle5012b::enableSensor()
     //TODO: Implement PAL interface
 //	pinMode(mEN, OUTPUT);
 //	digitalWrite(mEN, HIGH);
+    power->enable();
 //	pinMode(mCS, OUTPUT);
 //	digitalWrite(mCS, HIGH);
 }
@@ -218,6 +244,7 @@ void Tle5012b::disableSensor()
 {
     //TODO: Implement PAL interface
 	//digitalWrite(mEN, LOW);
+    power->disable();
 }
 
 //-----------------------------------------------------------------------------
