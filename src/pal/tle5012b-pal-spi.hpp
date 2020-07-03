@@ -1,7 +1,7 @@
 #ifndef TLE5012B_PAL_SPI_HPP_
 #define TLE5012B_PAL_SPI_HPP_
 
-#include "../tle5012b.h"
+#include "../corelib/tle5012b.h"
 
 class Tle5012b::SPI
 {

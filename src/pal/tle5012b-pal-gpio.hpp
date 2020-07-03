@@ -1,7 +1,7 @@
 #ifndef TLE5012B_PAL_GPIO_HPP_
 #define TLE5012B_PAL_GPIO_HPP_
 
-#include "../Tle5012b.h"
+#include "../corelib/Tle5012b.h"
 
 class Tle5012b::GPIO
 {    

@@ -3,7 +3,7 @@
 #define TLE5012B_PAL_TIMER_HPP_
 
 
-#include "../tle5012b.h"
+#include "../corelib/tle5012b.h"
 
 class Tle5012b::Timer
 {

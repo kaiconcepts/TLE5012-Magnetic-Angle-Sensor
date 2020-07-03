@@ -9,15 +9,15 @@ NAME := Lib_tle5012_angle
 
 GLOBAL_DEFINES   := TLE5012B_FRAMEWORK=TLE5012B_FRMWK_WICED
 
-GLOBAL_INCLUDES  := src/								\
+GLOBAL_INCLUDES  := src/corelib							\
 					src/config							\
 					src/pal								\
 					src/framework/wiced-43xxx/pal		\
 					src/framework/wiced-43xxx/wrapper
 #					#src/util	
 
-$(NAME)_SOURCES  := src/Tle5012b.cpp											\
-					src/Tle5012b_reg.cpp										\
+$(NAME)_SOURCES  := src/corelib/Tle5012b.cpp									\
+					src/corelib/Tle5012b_reg.cpp								\
 					src/framework/wiced-43xxx/pal/tle5012b-pal-gpio-wiced.cpp	\
 					src/framework/wiced-43xxx/pal/tle5012b-pal-timer-wiced.cpp	\
 					src/framework/wiced-43xxx/pal/tle5012b-pal-spi-wiced.cpp	\
