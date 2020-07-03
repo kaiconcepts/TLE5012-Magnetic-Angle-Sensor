@@ -77,9 +77,9 @@
 #define REG_IIF_CNT                 0x0200    //!< IIF_CNT IIF counter value
 #define REG_T25O                    0x0300    //!< T25O temperature 25°c offset value
 
-#define SYSTEM_ERROR_MASK           0x4000    //!< System error masks for safety words
-#define INTERFACE_ERROR_MASK        0x2000    //!< Interface error masks for safety words
-#define INV_ANGLE_ERROR_MASK        0x1000    //!< Angle error masks for safety words
+#define SYSTEM_ERROR_MASK           0x4000U   //!< System error masks for safety words
+#define INTERFACE_ERROR_MASK        0x2000U   //!< Interface error masks for safety words
+#define INV_ANGLE_ERROR_MASK        0x1000U   //!< Angle error masks for safety words
 
 #define CRC_POLYNOMIAL              0x1D      //!< values used for calculating the CRC
 #define CRC_SEED                    0xFF
@@ -147,13 +147,13 @@ class Tle5012b
      */
     enum Error_t
     {
-        NO_ERROR               = 0x00,  //!< NO_ERROR = Safety word was OK
-        SYSTEM_ERROR           = 0x01,  //!< SYSTEM_ERROR = over/under voltage, VDD negative, GND off, ROM defect
-        INTERFACE_ACCESS_ERROR = 0x02,  //!< INTERFACE_ACCESS_ERROR = wrong address or wrong lock
-        INVALID_ANGLE_ERROR    = 0x03,  //!< INVALID_ANGLE_ERROR = NO_GMR_A = 1 or NO_GMR_XY = 1
-        ANGLE_SPEED_ERROR      = 0x04,  //!< ANGLE_SPEED_ERROR = combined error, angular speed calculation wrong
-        PAL_ERROR              = 0x05,  //!< PAL_ERROR = PAL interface error
-        CRC_ERROR              = 0xFF   //!< CRC_ERROR = Cyclic Redundancy Check (CRC), which includes the STAT and RESP bits wrong
+        NO_ERROR               = 0x0000,  //!< NO_ERROR = Safety word was OK
+        SYSTEM_ERROR           = 0x0001,  //!< SYSTEM_ERROR = over/under voltage, VDD negative, GND off, ROM defect
+        INTERFACE_ACCESS_ERROR = 0x0002,  //!< INTERFACE_ACCESS_ERROR = wrong address or wrong lock
+        INVALID_ANGLE_ERROR    = 0x0003,  //!< INVALID_ANGLE_ERROR = NO_GMR_A = 1 or NO_GMR_XY = 1
+        ANGLE_SPEED_ERROR      = 0x0004,  //!< ANGLE_SPEED_ERROR = combined error, angular speed calculation wrong
+        PAL_ERROR              = 0x0005,  //!< PAL_ERROR = PAL interface error
+        CRC_ERROR              = 0x00FF,  //!< CRC_ERROR = Cyclic Redundancy Check (CRC), which includes the STAT and RESP bits wrong
     };
 
     class SPI;

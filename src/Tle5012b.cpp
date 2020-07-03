@@ -42,6 +42,7 @@
  *
  */
 
+#include <string.h>
 #include "Tle5012b.h"
 
 //-----------------------------------------------------------------------------
@@ -144,14 +145,15 @@ double calculateAngleSpeed(double angRange, int16_t rawAngleSpeed, uint16_t firM
 //-----------------------------------------------------------------------------
 Tle5012b::Tle5012b()
 {
-	_spiConnection = &SPI;
+	//_spiConnection = &SPI;
 	safetyWord = 0;
 	mSlave = TLE5012B_S0;
-	mEN = PIN_SPI_EN;
-	mCS = SS;
-	mMISO = MISO;
-	mMOSI = MOSI;
-	mSCK = SCK;
+	//TODO: This goes to the wrapper
+//	mEN = PIN_SPI_EN;
+//	mCS = SS;
+//	mMISO = MISO;
+//	mMOSI = MOSI;
+//	mSCK = SCK;
 }
 
 Tle5012b::~Tle5012b()
@@ -179,7 +181,8 @@ Tle5012b::Error_t Tle5012b::begin(SPI &bus, uint8_t miso, uint8_t mosi, uint8_t 
 	mSCK = sck;
 	mSlave = slave;
 	_spiConnection = &bus;
-	_spiConnection->begin( miso, mosi, sck, cs);
+	//TODO: begin
+//	_spiConnection->begin( miso, mosi, sck, cs);
 	enableSensor();
 	writeSlaveNumber(mSlave);
 	return (readBlockCRC());
@@ -192,26 +195,29 @@ void Tle5012b::end()
 
 void Tle5012b::triggerUpdate()
 {
-	_spiConnection->setCSPin(mCS);
-	digitalWrite(mSCK, LOW);
-	digitalWrite(mMOSI, HIGH);
-	digitalWrite(mCS, LOW);
+    //TODO: Do it with PAL interface
+//	_spiConnection->setCSPin(mCS);
+//	digitalWrite(mSCK, LOW);
+//	digitalWrite(mMOSI, HIGH);
+//	digitalWrite(mCS, LOW);
 	//grace period for register snapshot
-	delayMicroseconds(5);
-	digitalWrite(mCS, HIGH);
+//	delayMicroseconds(5);
+//	digitalWrite(mCS, HIGH);
 }
 
 void Tle5012b::enableSensor()
 {
-	pinMode(mEN, OUTPUT);
-	digitalWrite(mEN, HIGH);
-	pinMode(mCS, OUTPUT);
-	digitalWrite(mCS, HIGH);
+    //TODO: Implement PAL interface
+//	pinMode(mEN, OUTPUT);
+//	digitalWrite(mEN, HIGH);
+//	pinMode(mCS, OUTPUT);
+//	digitalWrite(mCS, HIGH);
 }
 
 void Tle5012b::disableSensor()
 {
-	digitalWrite(mEN, LOW);
+    //TODO: Implement PAL interface
+	//digitalWrite(mEN, LOW);
 }
 
 //-----------------------------------------------------------------------------
@@ -223,8 +229,9 @@ Tle5012b::Error_t Tle5012b::readFromSensor(uint16_t command, uint16_t &data, upd
 	_command[0] = READ_SENSOR | command | upd | safe;
 	uint16_t _received[MAX_REGISTER_MEM] = {0};
 
-	_spiConnection->setCSPin(mCS);
-	_spiConnection->sendReceiveSpi(_command, 1, _received, 2);
+	//TODO: transfer function
+//	_spiConnection->setCSPin(mCS);
+//	_spiConnection->sendReceiveSpi(_command, 1, _received, 2);
 	data = _received[0];
 	if (safe == SAFE_high)
 	{
@@ -245,8 +252,9 @@ Tle5012b::Error_t Tle5012b::readMoreRegisters(uint16_t command, uint16_t data[],
 	uint16_t _received[MAX_REGISTER_MEM] = {0};
 	uint16_t _recDataLength = (_command[0] & (0x000F)); // Number of registers to read
 
-	_spiConnection->setCSPin(mCS);
-	_spiConnection->sendReceiveSpi(_command, 1, _received, _recDataLength + safe);
+    //TODO: transfer function
+//	_spiConnection->setCSPin(mCS);
+//	_spiConnection->sendReceiveSpi(_command, 1, _received, _recDataLength + safe);
 	memcpy(data, _received, (_recDataLength)* sizeof(uint16_t));
 	if (safe == SAFE_high)
 	{
@@ -264,8 +272,11 @@ Tle5012b::Error_t Tle5012b::writeToSensor(uint16_t command, uint16_t dataToWrite
 	uint16_t safety = 0;
 	_command[0] = WRITE_SENSOR | command | SAFE_high;
 	_command[1] = dataToWrite;
-	_spiConnection->setCSPin(mCS);
-	_spiConnection->sendReceiveSpi(_command, 2, &safety, 1);
+
+    //TODO: transfer function
+//	_spiConnection->setCSPin(mCS);
+//	_spiConnection->sendReceiveSpi(_command, 2, &safety, 1);
+
 	Error_t checkError = checkSafety(safety, _command[0], &_command[1], 1);
 	//if we write to a register, which changes the CRC.
 	if (changeCRC)
@@ -283,8 +294,11 @@ Tle5012b::Error_t Tle5012b::writeTempCoeffUpdate(uint16_t dataToWrite)
 	triggerUpdate();
 	_command[0] = WRITE_SENSOR | REG_TCO_Y | SAFE_high;
 	_command[1] = dataToWrite;
-	_spiConnection->setCSPin(mCS);
-	_spiConnection->sendReceiveSpi(_command, 2, &safety, 1);
+
+    //TODO: transfer function
+//	_spiConnection->setCSPin(mCS);
+//	_spiConnection->sendReceiveSpi(_command, 2, &safety, 1);
+
 	Error_t checkError = checkSafety(safety, _command[0], &_command[1], 1);
 	//
 	checkError = readStatus(readreg);
@@ -304,17 +318,17 @@ Tle5012b::Error_t Tle5012b::checkSafety(uint16_t safety, uint16_t command, uint1
 	Error_t errorCheck;
 	safetyWord = safety;
 
-	if (!((safety) & SYSTEM_ERROR_MASK))
+	if (!((safety) & (Tle5012b::Error_t)SYSTEM_ERROR_MASK))
 	{
 		errorCheck = SYSTEM_ERROR;
 		//resetSafety();
-	} else if (!((safety) & INTERFACE_ERROR_MASK))
+	} else if (!((safety) & (Tle5012b::Error_t)INTERFACE_ERROR_MASK))
 	{
-		errorCheck = INTERFACE_ERROR_MASK;
+		errorCheck = (Tle5012b::Error_t)INTERFACE_ERROR_MASK;
 		//resetSafety();
-	} else if (!((safety) & INV_ANGLE_ERROR_MASK))
+	} else if (!((safety) & (Tle5012b::Error_t)INV_ANGLE_ERROR_MASK))
 	{
-		errorCheck = INV_ANGLE_ERROR_MASK;
+		errorCheck = (Tle5012b::Error_t)INV_ANGLE_ERROR_MASK;
 		//resetSafety();
 	}else{
 		//resetSafety();
@@ -349,7 +363,9 @@ void Tle5012b::resetSafety()
 	uint16_t command = READ_SENSOR + SAFE_high;
 	uint16_t receive[4];
 	triggerUpdate();
-	_spiConnection->sendReceiveSpi(&command, 1, receive, 3);
+
+	//TODO: transfer function
+//	_spiConnection->sendReceiveSpi(&command, 1, receive, 3);
 }
 
 Tle5012b::Error_t Tle5012b::regularCrcUpdate()
@@ -378,8 +394,11 @@ Tle5012b::Error_t Tle5012b::readBlockCRC()
 {
 	_command[0] = READ_BLOCK_CRC;
 	uint16_t _registers[CRC_NUM_REGISTERS+1] = {0};  // Number of CRC Registers + 1 Register for Safety word
-	_spiConnection->setCSPin(mCS);
-	_spiConnection->sendReceiveSpi(_command, 1, _registers, CRC_NUM_REGISTERS+1);
+
+	//TODO: transfer function
+//	_spiConnection->setCSPin(mCS);
+//	_spiConnection->sendReceiveSpi(_command, 1, _registers, CRC_NUM_REGISTERS+1);
+
 	Error_t checkError = checkSafety(_registers[8], READ_BLOCK_CRC, _registers, 8);
 	resetSafety();
 	return (checkError);

@@ -1,6 +1,6 @@
 #include "tle5012b-pal-gpio-wiced.hpp"
 
-#if (TLE5012B_FRAMEWORK == TLE5012B_FRMWK_WICED))
+#if (TLE5012B_FRAMEWORK == TLE5012B_FRMWK_WICED)
 
 //#include "tle5012b-int.hpp"
 
@@ -73,8 +73,8 @@ inline Tle5012b::Error_t GPIOWiced::enableInt(Tle5012b *ptr)
 {
     Tle5012b::Error_t err = Tle5012b::NO_ERROR;
 
-    if(WICED_SUCCESS != wiced_gpio_input_irq_enable(pin,IRQ_TRIGGER_BOTH_EDGES, (wiced_gpio_irq_handler_t)(HallSwitch::Interrupt::isrRegister(ptr)),NULL))
-        err = Tle5012b::PAL_ERROR;
+//    if(WICED_SUCCESS != wiced_gpio_input_irq_enable(pin,IRQ_TRIGGER_BOTH_EDGES, (wiced_gpio_irq_handler_t)(HallSwitch::Interrupt::isrRegister(ptr)),NULL))
+//        err = Tle5012b::PAL_ERROR;
 
     return err;
 }

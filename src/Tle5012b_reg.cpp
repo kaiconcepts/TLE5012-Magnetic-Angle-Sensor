@@ -49,10 +49,12 @@ Tle5012b::Error_t Tle5012b_reg::readSensorType()
 	sensorRegister.registers[19] = rawData[1];
 
 	status = readTempIIFCnt(rawData[0]);
-	sensorRegister.registers[20] = rawData;
+	//TODO: this assignment??
+	//sensorRegister.registers[20] = rawData;
 
 	status = readTempT25(rawData[0]);
-	sensorRegister.registers[21] = rawData;
+	//TODO: this assigment??
+	//sensorRegister.registers[21] = rawData;
 
 	sensorRegister.stat.reg   = sensorRegister.registers[0];
 	sensorRegister.acstat.reg = sensorRegister.registers[1];

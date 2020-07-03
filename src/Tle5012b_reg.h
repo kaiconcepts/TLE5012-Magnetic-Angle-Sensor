@@ -82,24 +82,24 @@ class Tle5012b_reg: public Tle5012b
 
 	using Tle5012b::Tle5012b;   //!< Using the inherited constructor
 
-	typedef struct stat_t       //!< Status register 0x00
+	typedef struct          //!< Status register 0x00
 	{
-		bool RDST;           //!< bits 15:15 Read status
-		uint8_t SNR;            //!< bits 14:13 Slave number
-		bool NOGMRA;         //!< bits 12:12 No valid GMR angle value
-		bool NOGMRXY;        //!< bits 11:11 No valid GMR XY values
-		bool SROM;           //!< bits 10:10 Status ROM
-		bool SADCT;          //!< bits 9:9 Status ADC Test
-		bool Reserved1;      //!< bits 8:8
-		bool SMAGOL;         //!< bits 7:7 Status magnitude out of Limit
-		bool SXYOL;          //!< bits 6:6 Status  X,Y Data out of Limit
-		bool SOV;            //!< bits 5:5 Status overflow
-		bool SDSPU;          //!< bits 4:4 Status digital signal processing unit
-		bool SFUSE;          //!< bits 3:3 Status fuse CRC
-		bool SVR;            //!< bits 2:2 Status voltage regulator
-		bool SWD;            //!< bits 1:1 Status Watch dog
-		bool SRST;           //!< bits 0:0 Status Reset
-		uint16_t reg;           //!< the register value
+		bool     RDST;      //!< bits 15:15 Read status
+		uint8_t  SNR;       //!< bits 14:13 Slave number
+		bool     NOGMRA;    //!< bits 12:12 No valid GMR angle value
+		bool     NOGMRXY;   //!< bits 11:11 No valid GMR XY values
+		bool     SROM;      //!< bits 10:10 Status ROM
+		bool     SADCT;     //!< bits 9:9 Status ADC Test
+		bool     Reserved1; //!< bits 8:8
+		bool     SMAGOL;    //!< bits 7:7 Status magnitude out of Limit
+		bool     SXYOL;     //!< bits 6:6 Status  X,Y Data out of Limit
+		bool     SOV;       //!< bits 5:5 Status overflow
+		bool     SDSPU;     //!< bits 4:4 Status digital signal processing unit
+		bool     SFUSE;     //!< bits 3:3 Status fuse CRC
+		bool     SVR;       //!< bits 2:2 Status voltage regulator
+		bool     SWD;       //!< bits 1:1 Status Watch dog
+		bool     SRST;      //!< bits 0:0 Status Reset
+		uint16_t reg;       //!< the register value
 
 		bool fetch_SRST(uint16_t reg) {SRST = (reg & 0x1);return (SRST);}                        //!< status reset
 		bool fetch_SWD(uint16_t reg) {SWD = (reg & 0x2) >> 1;return (SWD);}                      //!< status watch dog
@@ -116,23 +116,23 @@ class Tle5012b_reg: public Tle5012b
 		bool fetch_NOGMRA(uint16_t reg) {NOGMRA = (reg & 0x1000) >> 12;return (NOGMRA);}         //!< no valid GMR Angle Value
 		uint8_t fetch_SNR(uint16_t reg) {SNR = (reg & 0x6000) >> 13;return (SNR);}                  //!< slave number
 		bool fetch_RDST(uint16_t reg) {RDST = (reg & 0x8000) >> 15;return (RDST);}               //!< read status
-	};
+	}stat_t;
 
-	typedef struct acstat_t     //!< Activation Status register offset 0x01
+	typedef struct          //!< Activation Status register offset 0x01
 	{
-		uint8_t Reserved1;      //!< bits 15:11
-		bool ASFRST;         //!< bits 10:10 Activation of Firmware Reset
-		bool ASADCT;         //!< bits 9:9 Enable ADC Test vector Check
-		bool Reserved2;      //!< bits 8:8
-		bool ASVEGMAG;       //!< bits 7:7 Activation of Magnitude Check
-		bool ASVECXY;        //!< bits 6:6 Activation of X,Y Out of Limit-Check
-		bool ASOV;           //!< bits 5:5 Enable of DSPU Overflow Check
-		bool ASDSPU;         //!< bits 4:4 Activation DSPU BIST
-		bool ASFUSE;         //!< bits 3:3 Activation Fuse CRC
-		bool ASVR;           //!< bits 2:2 Enable Voltage regulator Check
-		bool ASWD;           //!< bits 1:1 Enable DSPU Watch dog
-		bool ASRST;          //!< bits 0:0 Activation of Hardware Reset
-		uint16_t reg;           //!< the register value
+		uint8_t  Reserved1; //!< bits 15:11
+		bool     ASFRST;    //!< bits 10:10 Activation of Firmware Reset
+		bool     ASADCT;    //!< bits 9:9 Enable ADC Test vector Check
+		bool     Reserved2; //!< bits 8:8
+		bool     ASVEGMAG;  //!< bits 7:7 Activation of Magnitude Check
+		bool     ASVECXY;   //!< bits 6:6 Activation of X,Y Out of Limit-Check
+		bool     ASOV;      //!< bits 5:5 Enable of DSPU Overflow Check
+		bool     ASDSPU;    //!< bits 4:4 Activation DSPU BIST
+		bool     ASFUSE;    //!< bits 3:3 Activation Fuse CRC
+		bool     ASVR;      //!< bits 2:2 Enable Voltage regulator Check
+		bool     ASWD;      //!< bits 1:1 Enable DSPU Watch dog
+		bool     ASRST;     //!< bits 0:0 Activation of Hardware Reset
+		uint16_t reg;       //!< the register value
 
 		bool fetch_ASRST(uint16_t reg) {ASRST = (reg & 0x1);return (ASRST);}
 		bool fetch_ASWD(uint16_t reg) {ASWD = (reg & 0x2) >> 1;return (ASWD);}
@@ -146,33 +146,33 @@ class Tle5012b_reg: public Tle5012b
 		bool fetch_ASADCT(uint16_t reg) {ASADCT = (reg & 0x200) >> 9;return (ASADCT);}
 		bool fetch_ASFRST(uint16_t reg) {ASFRST = (reg & 0x400) >> 10;return (ASFRST);}
 		uint8_t fetch_Reserved1(uint16_t reg) {Reserved1 = (reg & 0xF800) >> 11;return (Reserved1);}
-	};
+	}acstat_t;
 
-	typedef struct aval_t       //!< Angle Value register offset 0x02
+	typedef struct              //!< Angle Value register offset 0x02
 	{
 		uint16_t ANGVAL;        //!< bits 14:0 Calculated Angle Value (signed 15-bit)
-		bool RDAV;           //!< bits 15:15  Read Status, Angle Value
+		bool     RDAV;          //!< bits 15:15  Read Status, Angle Value
 		uint16_t reg;           //!< the register value
 
 		bool fetch_ANGVAL(uint16_t reg) {ANGVAL = (reg & 0x7FFF);return (ANGVAL);}
 		uint16_t fetch_RDAV(uint16_t reg) {RDAV = (reg & 0x8000) >> 15;return (RDAV);}
-	};
+	}aval_t;
 
-	typedef struct aspd_t       //!< Angle Speed register offset 0x03
+	typedef struct              //!< Angle Speed register offset 0x03
 	{
 		uint16_t ANGSPD;        //!< bits 14:0 Signed value, where the sign bit [14] indicates the direction of the rotation.
-		bool RDAS;           //!< bits 15:15 Read Status, Angle Speed
+		bool     RDAS;          //!< bits 15:15 Read Status, Angle Speed
 		uint16_t reg;           //!< the register value
 
 		bool fetch_ANGSPD(uint16_t reg) {ANGSPD = (reg & 0x7FFF);return (ANGSPD);}
 		uint16_t fetch_RDAS(uint16_t reg) {RDAS = (reg & 0x8000) >> 15;return (RDAS);}
-	};
+	}aspd_t;
 
-	typedef struct arev_t       //!< Angle Revolution register offset 0x04
+	typedef struct              //!< Angle Revolution register offset 0x04
 	{
-		int16_t REVOL;          //!< bits 8:0 Revolution counter. Increments for every full rotation in counter-clockwise direction
+		int16_t  REVOL;         //!< bits 8:0 Revolution counter. Increments for every full rotation in counter-clockwise direction
 		uint16_t FCNT;          //!< bits 14:9 Internal frame counter. Increments every update period
-		bool RDREV;          //!< bits 15:15 Read Status, Revolution
+		bool     RDREV;         //!< bits 15:15 Read Status, Revolution
 		uint16_t reg;           //!< the register value
 
 		uint16_t fetch_FCNT(uint16_t reg) {FCNT = (reg & 0x7E00) >> 9;return (FCNT);}        //!< Frame Counter
@@ -186,12 +186,12 @@ class Tle5012b_reg: public Tle5012b
 			}
 			return (REVOL);
 		}
-	};
+	}arev_t;
 
-	typedef struct fsync_t      //!< Frame Synchronization register offset 0x05
+	typedef struct              //!< Frame Synchronization register offset 0x05
 	{
 		uint16_t FSYNC;         //!< bits 15:9 Frame Synchronization Counter Value
-		int16_t TEMPR;          //!< bits 8:0 Signed offset compensated temperature value.
+		int16_t  TEMPR;         //!< bits 8:0 Signed offset compensated temperature value.
 		uint16_t reg;           //!< the register value
 
 		int16_t fetch_TEMPR(uint16_t reg)
@@ -208,9 +208,9 @@ class Tle5012b_reg: public Tle5012b
 			FSYNC = (reg & 0xFE00) >> 9;
 			return (FSYNC);
 		}
-	};
+	}fsync_t;
 
-	typedef struct mod1_t       //!< MOD_1 Interface Mode1 register offset 0x06
+	typedef struct              //!< MOD_1 Interface Mode1 register offset 0x06
 	{
 		uint8_t  FIRMD;         //!< bits 15:14 Update Rate Setting
 		uint16_t Reserverd1;    //!< bits 13:5
@@ -226,18 +226,18 @@ class Tle5012b_reg: public Tle5012b
 		bool fetch_CLKSEL(uint16_t reg) {CLKSEL = (reg & 0x10) >> 4;return (CLKSEL);}
 		bool fetch_Reserverd2(uint16_t reg) {Reserverd2 = (reg & 0x3FE0) >> 5;return (Reserverd2);}
 		uint8_t fetch_FIRMD(uint16_t reg) {FIRMD = (reg & 0x6000) >> 13;return (FIRMD);}
-	};
+	}mod1_t;
 
-	typedef struct sil_t        //!< SIL register offset 0x07
+	typedef struct              //!< SIL register offset 0x07
 	{
-		bool    FILTPAR;        //!< bits 15:15
-		bool    FILTINV;        //!< bits 14:14 The raw X-signal is routed also to the raw Y-signal input of the filter so SIN and COS signal should be identical.
-		uint8_t Reserverd1;     //!< bits 13:11 The X- and Y-signals are inverted. The angle output is then shifted by 180°.
-		bool    FUSEREL;        //!< bits 10:10 Triggers reload of default values from laser fuses into configuration registers.
-		uint8_t Reserverd2;     //!< bits 9:7
-		bool    ADCTVEN;        //!< bits 6:6 Sensor elements are internally disconnected and test voltages are connected to ADCs.
-		uint8_t ADCTVY;         //!< bits 5:3 Test vector X
-		uint8_t ADCTVX;         //!< bits 2:0 Test vector Y
+		bool     FILTPAR;       //!< bits 15:15
+		bool     FILTINV;       //!< bits 14:14 The raw X-signal is routed also to the raw Y-signal input of the filter so SIN and COS signal should be identical.
+		uint8_t  Reserverd1;    //!< bits 13:11 The X- and Y-signals are inverted. The angle output is then shifted by 180°.
+		bool     FUSEREL;       //!< bits 10:10 Triggers reload of default values from laser fuses into configuration registers.
+		uint8_t  Reserverd2;    //!< bits 9:7
+		bool     ADCTVEN;       //!< bits 6:6 Sensor elements are internally disconnected and test voltages are connected to ADCs.
+		uint8_t  ADCTVY;        //!< bits 5:3 Test vector X
+		uint8_t  ADCTVX;        //!< bits 2:0 Test vector Y
 		uint16_t reg;           //!< the register value
 
 		uint8_t fetch_ADCTVX(uint16_t reg) {ADCTVX = (reg & 0x7);return (ADCTVX);}
@@ -248,9 +248,9 @@ class Tle5012b_reg: public Tle5012b
 		uint8_t fetch_Reserverd2(uint16_t reg) {Reserverd2 = (reg & 0x3800) >> 11;return (Reserverd2);}
 		bool fetch_FILTINV(uint16_t reg) {FILTINV = (reg & 0x4000) >> 14;return (FILTINV);}
 		bool fetch_FILTPAR(uint16_t reg) {FILTPAR = (reg & 0x8000) >> 15;return (FILTPAR);}
-	};
+	}sil_t;
 
-	typedef struct mod2_t       //!< MOD_2 Interface Mode2 register offset 0x08
+	typedef struct              //!< MOD_2 Interface Mode2 register offset 0x08
 	{
 		bool     Reserverd1;    //!< bits 15:15
 		uint16_t ANGRANGE;      //!< bits 14:4 Changes the representation of the angle output by multiplying the output with a factor ANG_RANGE/128.
@@ -264,9 +264,9 @@ class Tle5012b_reg: public Tle5012b
 		bool fetch_ANGDIR(uint16_t reg) {ANGDIR = (reg & 0x8) >> 3;return (ANGDIR);}
 		uint16_t fetch_ANGRANGE(uint16_t reg) {ANGRANGE = (reg & 0x7FF0) >> 4;return (ANGRANGE);}
 		bool fetch_Reserverd1(uint16_t reg) {Reserverd1 = (reg & 0x8000) >> 15;return (Reserverd1);}
-	};
+	}mod2_t;
 
-	typedef struct mod3_t       //!< MOD_3 Interface Mode3 register offset 0x09
+	typedef struct              //!< MOD_3 Interface Mode3 register offset 0x09
 	{
 		uint16_t ANG_BASE;      //!< bits 15:4 Sets the 0° angle position (12 bit value). Angle base is factory-calibrated to make the 0° direction parallel to the edge of the chip.
 		bool     SPIKEF;        //!< bits 3:3 Filters voltage spikes on input pads (IFC, SCK and CSQ).
@@ -278,12 +278,12 @@ class Tle5012b_reg: public Tle5012b
 		bool fetch_SSCOD(uint16_t reg) {SSCOD = (reg & 0x4) >> 2;return (SSCOD);}
 		bool fetch_SPIKEF(uint16_t reg) {SPIKEF = (reg & 0x8) >> 3;return (SPIKEF);}
 		uint16_t fetch_ANG_BASE(uint16_t reg) {ANG_BASE = (reg & 0xFFF0) >> 4;return (ANG_BASE);}
-	};
+	} mod3_t;
 
-	typedef struct offx_t       //!< Offset X offset 0x0a
+	typedef struct              //!< Offset X offset 0x0a
 	{
-		int16_t XOFFSET;        //!< bits 15:4 12-bit signed integer value of raw X-signal offset correction at 25°C.
-		uint8_t Reserverd1;     //!< bits 3:0
+		int16_t  XOFFSET;       //!< bits 15:4 12-bit signed integer value of raw X-signal offset correction at 25°C.
+		uint8_t  Reserverd1;    //!< bits 3:0
 		uint16_t reg;           //!< the register value
 
 		uint8_t fetch_Reserverd1(uint16_t reg) {Reserverd1 = (reg & 0xF);return (Reserverd1);}
@@ -296,12 +296,12 @@ class Tle5012b_reg: public Tle5012b
 			}
 			return (XOFFSET);
 		}
-	};
+	}offx_t;
 
-	typedef struct offy_t       //!< Offset Y offset 0x0b
+	typedef struct              //!< Offset Y offset 0x0b
 	{
-		int16_t YOFFSET;        //!< bits 15:4 12-bit signed integer value of raw Y-signal offset correction at 25°C.
-		uint8_t Reserverd1;     //!< bits 3:0
+		int16_t  YOFFSET;       //!< bits 15:4 12-bit signed integer value of raw Y-signal offset correction at 25°C.
+		uint8_t  Reserverd1;    //!< bits 3:0
 		uint16_t reg;           //!< the register value
 
 		uint8_t fetch_Reserverd1(uint16_t reg) {Reserverd1 = (reg & 0xF);return (Reserverd1);}
@@ -314,11 +314,12 @@ class Tle5012b_reg: public Tle5012b
 			}
 			return (YOFFSET);
 		}
-	};
+	}offy_t;
 
-	typedef struct synch_t {	//!< Synchronicity offset 0x0c
-		int16_t SYNCH;			//!< bits 15:4 12-bit signed integer value of amplitude synchronicity
-		uint8_t Reserverd1;		//!< bits 3:0
+	typedef struct  	        //!< Synchronicity offset 0x0c
+	{
+		int16_t  SYNCH;			//!< bits 15:4 12-bit signed integer value of amplitude synchronicity
+		uint8_t  Reserverd1     //!< bits 3:0
 		uint16_t reg;			//!< the register value
 
 		uint8_t fetch_Reserverd1(uint16_t reg) {Reserverd1 = (reg & 0xF);return (Reserverd1);}
@@ -329,9 +330,10 @@ class Tle5012b_reg: public Tle5012b
 			}
 			return (SYNCH);
 		}
-	};
+	}synch_t;
 
-	typedef struct ifab_t {		//!< IFAB register offset 0x0d
+	typedef struct  		    //!< IFAB register offset 0x0d
+	{
 		int16_t  ORTHO;			//!< bits 15:4 Orthogonality Correction of X and Y Components
 		bool     FIRUDR;	    //!< bits 3:3 Initial filter update rate (FIR)
 		bool     IFABOD;		//!< bits 2:2 IFA,IFB,IFC Output Mode
@@ -348,9 +350,10 @@ class Tle5012b_reg: public Tle5012b
 			}
 			return (ORTHO);
 		}
-	};
+	}ifab_t;
 
-	typedef struct mod4_t {		//!< MOD_4 Interface Mode4 register offset 0x0e
+	typedef struct              //!< MOD_4 Interface Mode4 register offset 0x0e
+	{
 		int8_t   TCOXT;			//!< bits 15:9 7-bit signed integer value of X-offset temperature coefficient.
 		uint8_t  HSMPLP;		//!< bits 8:5 Hall Switch mode (multi-purpose)
 		uint8_t  IFABRES;		//!< bits 4:3 IIF resolution (multi-purpose)
@@ -369,7 +372,7 @@ class Tle5012b_reg: public Tle5012b
 			}
 			return (TCOXT);
 		}
-	};
+	}mod4_t;
 
 	typedef struct tcoy_t {		//!< TCO_Y Temperature Coefficient register offset 0x0f
 		int8_t TCOYT;			//!< bits 15:9 7-bit signed integer value of Y-offset temperature coefficient.
@@ -435,22 +438,22 @@ class Tle5012b_reg: public Tle5012b
 		uint16_t registers[MAX_NUM_REG];	//!< raw register memory
 		interfaceType interface;			//!< enum identify the Interface type
 		sensorType sensorBoard;				//!< enum identify the PCM board type
-		String interfaceName;
-		String sensorName;
-		String nameOfRegister[MAX_NUM_REG] = {
+		char * interfaceName;
+		char * sensorName;
+		char * nameOfRegister[MAX_NUM_REG] = {
 				"STAT  ","ACSTAT","AVAL  ","ASPD  ","AREV  ",
 				"FSYNC ","MOD1  ","SIL   ","MOD2  ","MOD3  ",
 				"OFFX  ","OFFY  ","SYNCH ","IFAB  ","MOD4  ",
 				"TCOY  ","ADCX  ","ADCY  ","DMAG  ","TRAW  ",
 				"IIFCNT","T250  "
 		};
-		struct stat_t stat;
-		struct acstat_t acstat;
-		struct aval_t aval;
-		struct aspd_t aspd;
-		struct arev_t arev;
-		struct fsync_t fsync;
-		struct mod1_t mod1;
+		stat_t stat;
+		acstat_t acstat;
+		aval_t aval;
+		aspd_t aspd;
+		arev_t arev;
+		fsync_t fsync;
+		mod1_t mod1;
 		struct sil_t sil;
 		struct mod2_t mod2;
 		struct mod3_t mod3;
