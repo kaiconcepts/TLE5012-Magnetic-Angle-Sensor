@@ -7,9 +7,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "gpio-arduino.hpp"
+#include "gpio-samd.hpp"
 
-#if (TLE94112_FRAMEWORK == TLE94112_FRMWK_ARDUINO)
+#if (TLE94112_FRAMEWORK == TLE5012_FRMWK_JETFOIL)
 
 #include <Arduino.h>
 

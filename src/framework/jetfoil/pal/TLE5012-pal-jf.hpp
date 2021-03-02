@@ -15,7 +15,7 @@
 
 #include "../../../config/tle5012-conf.hpp"
 
-#if (TLE5012_FRAMEWORK == TLE5012_FRMWK_ARDUINO)
+#if (TLE5012_FRAMEWORK == TLE5012_FRMWK_JETFOIL)
 
 /**
  * @addtogroup arduinoPal
@@ -24,10 +24,10 @@
  */
 
 #include <Arduino.h>
+#include <SPI.h>
 #include "../../../corelib/TLE5012b.hpp"
-#include "spic-arduino.hpp"
-#include "gpio-arduino.hpp"
-#include "spic-arduino.hpp"
+#include "spic-samd.hpp"
+#include "gpio-samd.hpp"
 
 //! Check for XMC mcu family */
 #define PIN_SPI_EN    UNUSED_PIN  /*!< TLE5012 with any other PCB has no switch on/off */
@@ -51,7 +51,7 @@ class Tle5012Ino: virtual public Tle5012b
 
 					Tle5012Ino();
 					Tle5012Ino(uint8_t csPin, slaveNum slave=TLE5012B_S0);
-					Tle5012Ino(SPIClass3W &bus, uint8_t csPin, uint8_t misoPin, uint8_t mosiPin, uint8_t sckPin, slaveNum slave=TLE5012B_S0);
+					Tle5012Ino(SPIClass &bus, uint8_t csPin, uint8_t misoPin, uint8_t mosiPin, uint8_t sckPin, slaveNum slave=TLE5012B_S0);
 		errorTypes  begin();
 
 };

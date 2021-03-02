@@ -8,12 +8,12 @@
  */
 
 
-#ifndef GPIO_ARDUINO_HPP_
-#define GPIO_ARDUINO_HPP_
+#ifndef GPIO_SAMD_HPP_
+#define GPIO_SAMD_HPP_
 
 #include "../../../config/tle5012-conf.hpp"
 
-#if (TLE5012_FRAMEWORK == TLE5012_FRMWK_ARDUINO)
+#if (TLE5012_FRAMEWORK == TLE5012_FRMWK_JETFOIL)
 
 #include "../../../corelib/TLE5012b.hpp"
 

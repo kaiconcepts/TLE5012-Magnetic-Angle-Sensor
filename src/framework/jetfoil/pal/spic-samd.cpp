@@ -7,9 +7,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "spic-arduino.hpp"
+#include "spic-samd.hpp"
 
-#if (TLE5012_FRAMEWORK == TLE5012_FRMWK_ARDUINO)
+#if (TLE5012_FRAMEWORK == TLE5012_FRMWK_JETFOIL)
 
 /**
  * @addtogroup arduinoPal
@@ -29,9 +29,7 @@
 SPICIno::SPICIno(uint8_t csPin)
 {
 	this->csPin = csPin;
-	#if defined(UC_FAMILY) && (UC_FAMILY == 1 || UC_FAMILY == 4)
-		this->spi =&SPI;
-	#endif
+	this->spi =&SPI;
 }
 
 /**
@@ -49,7 +47,7 @@ SPICIno::SPICIno(uint8_t csPin)
  * @param mosiPin  mosi pin number
  * @param sckPin   systemclock pin number
  */
-SPICIno::SPICIno(SPIClass3W &port, uint8_t csPin, uint8_t misoPin, uint8_t mosiPin, uint8_t sckPin)
+SPICIno::SPICIno(SPIClass &port, uint8_t csPin, uint8_t misoPin, uint8_t mosiPin, uint8_t sckPin)
 {
 	this->csPin   = csPin;
 	this->misoPin = misoPin;
@@ -68,7 +66,7 @@ SPICIno::SPICIno(SPIClass3W &port, uint8_t csPin, uint8_t misoPin, uint8_t mosiP
  */
 SPICIno::Error_t SPICIno::init()
 {
-	this->spi->begin(this->misoPin, this->mosiPin, this->sckPin, this->csPin);
+	this->spi->begin();
 	return OK;
 }
 
@@ -114,9 +112,22 @@ SPICIno::Error_t SPICIno::triggerUpdate()
 */
 SPICIno::Error_t SPICIno::sendReceive(uint16_t* sent_data, uint16_t size_of_sent_data, uint16_t* received_data, uint16_t size_of_received_data)
 {
-	this->spi->setCSPin(this->csPin);
-	this->spi->sendReceiveSpi(sent_data,size_of_sent_data,received_data,size_of_received_data);
+	uint32_t data_index = 0;
+	digitalWrite(this->csPin, LOW);
+	this->spi->beginTransaction(SPISettings(SPEED,MSBFIRST,SPI_MODE1));
+	for(data_index = 0; data_index < size_of_sent_data; data_index++)
+	{
+		received_data[0] = this->spi->transfer16(sent_data[data_index]);
+	}
+	delayMicroseconds(5);
+	for(data_index = 0; data_index < size_of_received_data; data_index++)
+	{
+		received_data[data_index] = this->spi->transfer16(0x0000);
+	}
+	this->spi->endTransaction();
+	digitalWrite(this->csPin, HIGH);
 	return OK;
+
 }
 
 /** @} */

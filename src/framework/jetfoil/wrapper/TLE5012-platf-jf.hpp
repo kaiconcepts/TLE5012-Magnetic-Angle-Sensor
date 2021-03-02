@@ -12,7 +12,7 @@
 
 #include "../../../config/tle5012-conf.hpp"
 
-#if (TLE5012_FRAMEWORK == TLE5012_FRMWK_ARDUINO)
+#if (TLE5012_FRAMEWORK == TLE5012_FRMWK_JETFOIL)
 
 /**
  * @class Tle5012Ino
@@ -28,7 +28,7 @@
  * @{
  */
 
-#include "../pal/TLE5012-pal-ino.hpp"
+#include "../pal/TLE5012-pal-jf.hpp"
 
 // Support macros
 //!< \brief Prints a binary number with leading zeros (Automatic Handling)

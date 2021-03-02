@@ -20,6 +20,7 @@
 #define TLE5012_FRMWK_WICED     0x02U
 #define TLE5012_FRMWK_MTB       0x03U
 #define TLE5012_FRMWK_PSOC      0x04U
+#define TLE5012_FRMWK_JETFOIL   0x05U
 
 /** @} */
 
